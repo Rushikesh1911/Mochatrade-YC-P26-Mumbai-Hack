@@ -19,10 +19,10 @@ export function RiskScoreCard({
     <BentoCard glowColor="rgba(239, 68, 68, 0.12)" className="flex flex-col justify-between">
       {/* Top row: Label & Icon */}
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+        <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
           Overall Risk
         </span>
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-500/10 text-red-400 border border-red-500/20">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-500/10 text-red-500 dark:text-red-400 border border-red-500/20">
           <ShieldAlert className="h-4 w-4" />
         </div>
       </div>
@@ -31,10 +31,10 @@ export function RiskScoreCard({
       <div className="my-3 flex items-center justify-between">
         <div>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-3xl font-extrabold tracking-tight text-white font-mono">
+            <span className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white font-mono">
               {score}
             </span>
-            <span className="text-sm font-medium text-slate-500">
+            <span className="text-sm font-medium text-slate-400 dark:text-slate-500">
               / {maxScore}
             </span>
           </div>
@@ -54,7 +54,7 @@ export function RiskScoreCard({
               r={radius}
               stroke="currentColor"
               strokeWidth="5"
-              className="text-slate-800"
+              className="text-slate-200 dark:text-slate-800"
               fill="transparent"
             />
             <circle
@@ -70,20 +70,22 @@ export function RiskScoreCard({
               fill="transparent"
             />
           </svg>
-          <div className="absolute text-[11px] font-mono font-bold text-red-400">
+          <div className="absolute text-[11px] font-mono font-bold text-red-500 dark:text-red-400">
             {score}%
           </div>
         </div>
       </div>
 
       {/* Bottom: Change context */}
-      <div className="flex items-center gap-1.5 text-xs text-slate-400 pt-1 border-t border-slate-800/60">
-        <span className="inline-flex items-center text-red-400 font-medium font-mono">
+      <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200 dark:border-slate-800/60">
+        <span className="inline-flex items-center text-red-500 dark:text-red-400 font-medium font-mono">
           <ArrowUpRight className="h-3.5 w-3.5 mr-0.5" />
           {change}
         </span>
-        <span className="text-slate-500">{period}</span>
+        <span className="text-slate-400 dark:text-slate-500">{period}</span>
       </div>
     </BentoCard>
   )
 }
+
+export default RiskScoreCard

@@ -8,38 +8,38 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts"
-import { TrendingUp, Calendar, ArrowUpRight } from "lucide-react"
+import { TrendingUp, Calendar } from "lucide-react"
 import { BentoCard } from "@/components/aceternity/BentoCard"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-// Custom sleek Tooltip designed to fit dark fintech aesthetic
+// Custom sleek Tooltip designed to fit dark and light fintech aesthetic
 function CustomChartTooltip({ active, payload, label }) {
   if (active && payload && payload.length) {
     const data = payload[0].payload
     return (
-      <div className="rounded-lg border border-slate-700 bg-slate-900/95 p-3 shadow-xl backdrop-blur-md">
-        <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-300">
-          <Calendar className="h-3 w-3 text-slate-500" />
+      <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 p-3 shadow-lg dark:shadow-xl backdrop-blur-md">
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300">
+          <Calendar className="h-3 w-3 text-slate-400 dark:text-slate-500" />
           <span>{label}</span>
         </div>
-        <div className="mt-2 border-t border-slate-800 pt-2">
-          <div className="text-[11px] font-medium text-slate-400">
+        <div className="mt-2 border-t border-slate-200 dark:border-slate-800 pt-2">
+          <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
             Total Exposure
           </div>
-          <div className="text-base font-bold font-mono text-blue-400">
+          <div className="text-base font-bold font-mono text-blue-600 dark:text-blue-400">
             {data.formatted || `₹${data.exposure} Cr`}
           </div>
         </div>
         {data.usdPart && (
-          <div className="mt-1.5 grid grid-cols-3 gap-2 border-t border-slate-800/60 pt-1.5 text-[10px] font-mono text-slate-400">
+          <div className="mt-1.5 grid grid-cols-3 gap-2 border-t border-slate-200 dark:border-slate-800/60 pt-1.5 text-[10px] font-mono text-slate-600 dark:text-slate-400">
             <div>
-              <span className="text-slate-500">USD:</span> ₹{data.usdPart}Cr
+              <span className="text-slate-400 dark:text-slate-500">USD:</span> ₹{data.usdPart}Cr
             </div>
             <div>
-              <span className="text-slate-500">EUR:</span> ₹{data.eurPart}Cr
+              <span className="text-slate-400 dark:text-slate-500">EUR:</span> ₹{data.eurPart}Cr
             </div>
             <div>
-              <span className="text-slate-500">GBP:</span> ₹{data.gbpPart}Cr
+              <span className="text-slate-400 dark:text-slate-500">GBP:</span> ₹{data.gbpPart}Cr
             </div>
           </div>
         )}
@@ -70,15 +70,15 @@ export function ExposureTrend({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-base font-semibold text-white">
+            <h3 className="text-base font-semibold text-slate-900 dark:text-white">
               Exposure Trend
             </h3>
-            <span className="inline-flex items-center gap-1 rounded bg-blue-500/10 px-2 py-0.5 text-xs font-mono font-medium text-blue-400 border border-blue-500/20">
+            <span className="inline-flex items-center gap-1 rounded bg-blue-500/10 px-2 py-0.5 text-xs font-mono font-medium text-blue-600 dark:text-blue-400 border border-blue-500/20">
               <TrendingUp className="h-3 w-3" />
               {isUp ? `+${pctChange}%` : `${pctChange}%`}
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Total financial exposure over time across all trading entities.
           </p>
         </div>
@@ -86,7 +86,7 @@ export function ExposureTrend({
         {/* Range Selector: 7D | 30D | 90D */}
         <div className="flex items-center">
           <Tabs value={activeRange} onValueChange={setActiveRange}>
-            <TabsList className="bg-slate-950/80 border border-slate-800">
+            <TabsList className="bg-slate-100 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800">
               <TabsTrigger value="7D" className="text-xs px-2.5 py-1">
                 7D
               </TabsTrigger>
@@ -119,9 +119,9 @@ export function ExposureTrend({
 
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="#1e293b"
+              stroke="#64748b"
               vertical={false}
-              opacity={0.6}
+              opacity={0.15}
             />
 
             <XAxis
@@ -129,7 +129,7 @@ export function ExposureTrend({
               stroke="#64748b"
               fontSize={11}
               tickLine={false}
-              axisLine={{ stroke: "#1e293b" }}
+              axisLine={{ stroke: "#64748b", opacity: 0.2 }}
               dy={8}
             />
 
@@ -170,10 +170,12 @@ export function ExposureTrend({
       </div>
 
       {/* Footer / Data integrity footnote */}
-      <div className="mt-3 flex items-center justify-between border-t border-slate-800/60 pt-2 text-[11px] text-slate-500">
+      <div className="mt-3 flex items-center justify-between border-t border-slate-200 dark:border-slate-800/60 pt-2 text-[11px] text-slate-500 dark:text-slate-500">
         <span>Mark-to-Market Valuation</span>
-        <span className="font-mono text-slate-400">Current: ₹12.5 Cr</span>
+        <span className="font-mono text-slate-700 dark:text-slate-400">Current: ₹12.5 Cr</span>
       </div>
     </BentoCard>
   )
 }
+
+export default ExposureTrend

@@ -13,21 +13,21 @@ function CustomPieTooltip({ active, payload }) {
   if (active && payload && payload.length) {
     const data = payload[0].payload
     return (
-      <div className="rounded-lg border border-slate-700 bg-slate-900/95 p-2.5 shadow-xl backdrop-blur-md">
+      <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 p-2.5 shadow-lg dark:shadow-xl backdrop-blur-md">
         <div className="flex items-center gap-2">
           <span
             className="h-2.5 w-2.5 rounded-full"
             style={{ backgroundColor: data.color }}
           />
-          <span className="text-xs font-semibold text-slate-200">
+          <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">
             {data.category}
           </span>
         </div>
         <div className="mt-1 flex items-baseline gap-2">
-          <span className="text-sm font-bold font-mono text-white">
+          <span className="text-sm font-bold font-mono text-slate-900 dark:text-white">
             {data.percentage}%
           </span>
-          <span className="text-xs text-slate-400 font-mono">
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
             ({data.amount})
           </span>
         </div>
@@ -52,14 +52,14 @@ export function RiskBreakdown({ riskData = [] }) {
       {/* Header */}
       <div>
         <div className="flex items-center justify-between pb-1">
-          <h3 className="text-base font-semibold text-white">
+          <h3 className="text-base font-semibold text-slate-900 dark:text-white">
             Risk Breakdown
           </h3>
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-800/80 text-slate-400">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400">
             <PieIcon className="h-4 w-4" />
           </div>
         </div>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500 dark:text-slate-400">
           Exposure distribution across key market risk factors.
         </p>
       </div>
@@ -93,10 +93,10 @@ export function RiskBreakdown({ riskData = [] }) {
           </ResponsiveContainer>
           {/* Centered label */}
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
-            <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-500">
+            <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-400 dark:text-slate-500">
               Dominant
             </span>
-            <span className="text-lg font-bold font-mono text-white">
+            <span className="text-lg font-bold font-mono text-slate-900 dark:text-white">
               FX 62%
             </span>
           </div>
@@ -107,19 +107,19 @@ export function RiskBreakdown({ riskData = [] }) {
           {data.map((item) => (
             <div
               key={item.category}
-              className="flex items-center justify-between rounded-lg border border-slate-800/50 bg-slate-900/40 px-2.5 py-1.5 transition-colors hover:bg-slate-800/40"
+              className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800/50 bg-slate-50 dark:bg-slate-900/40 px-2.5 py-1.5 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800/40"
             >
               <div className="flex items-center gap-2 min-w-0">
                 <span
                   className="h-2 w-2 shrink-0 rounded-full"
                   style={{ backgroundColor: item.color }}
                 />
-                <span className="truncate text-xs font-medium text-slate-300">
+                <span className="truncate text-xs font-medium text-slate-700 dark:text-slate-300">
                   {item.category}
                 </span>
               </div>
               <div className="text-right pl-2">
-                <span className="text-xs font-bold font-mono text-white">
+                <span className="text-xs font-bold font-mono text-slate-900 dark:text-white">
                   {item.percentage}%
                 </span>
               </div>
@@ -129,10 +129,12 @@ export function RiskBreakdown({ riskData = [] }) {
       </div>
 
       {/* Footer */}
-      <div className="border-t border-slate-800/60 pt-2 text-[11px] text-slate-500 flex justify-between">
+      <div className="border-t border-slate-200 dark:border-slate-800/60 pt-2 text-[11px] text-slate-500 flex justify-between">
         <span>Portfolio VaR weighting</span>
-        <span className="text-blue-400 font-mono">100% Accounted</span>
+        <span className="text-blue-600 dark:text-blue-400 font-mono">100% Accounted</span>
       </div>
     </BentoCard>
   )
 }
+
+export default RiskBreakdown

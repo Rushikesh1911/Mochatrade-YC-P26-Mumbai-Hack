@@ -13,10 +13,10 @@ export function AlertsCard({
     <BentoCard glowColor="rgba(239, 68, 68, 0.12)" className="flex flex-col justify-between">
       {/* Top row: Label & Icon */}
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+        <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
           Active Alerts
         </span>
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-500/10 text-red-400 border border-red-500/20">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-500/10 text-red-500 dark:text-red-400 border border-red-500/20">
           <Bell className="h-4 w-4" />
         </div>
       </div>
@@ -24,7 +24,7 @@ export function AlertsCard({
       {/* Center: Total Alerts + Badges */}
       <div className="my-3 flex items-baseline justify-between">
         <div>
-          <div className="text-3xl font-extrabold tracking-tight text-white font-mono">
+          <div className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white font-mono">
             {total}
           </div>
           <div className="mt-1 flex items-center gap-1.5">
@@ -41,12 +41,14 @@ export function AlertsCard({
       </div>
 
       {/* Bottom: Action prompt */}
-      <div className="flex items-center justify-between text-xs text-slate-400 pt-1 border-t border-slate-800/60">
-        <span className="text-slate-400">{description}</span>
-        <span className="text-blue-400 hover:text-blue-300 font-medium cursor-pointer text-[11px]">
+      <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200 dark:border-slate-800/60">
+        <span>{description}</span>
+        <span className="text-blue-600 dark:text-blue-400 hover:text-blue-500 font-medium cursor-pointer text-[11px]">
           Action Needed
         </span>
       </div>
     </BentoCard>
   )
 }
+
+export default AlertsCard

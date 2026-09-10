@@ -5,7 +5,7 @@ export function Spotlight({ className, fill = "#3b82f6" }) {
   return (
     <div
       className={cn(
-        "pointer-events-none absolute -top-40 left-1/4 -z-10 h-[380px] w-[550px] opacity-20 blur-[120px] transition-all duration-1000",
+        "pointer-events-none absolute -top-40 left-1/4 -z-10 h-[380px] w-[550px] opacity-10 dark:opacity-20 blur-[120px] transition-all duration-1000",
         className
       )}
       style={{
@@ -14,3 +14,5 @@ export function Spotlight({ className, fill = "#3b82f6" }) {
     />
   )
 }
+
+export default Spotlight
