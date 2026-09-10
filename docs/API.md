@@ -29,7 +29,7 @@ Request (`application/json`):
 Response (`200`) contains submitted fields and `current_inr_exposure`, `risk_score`, and `risk_level`:
 
 ```json
-{"amount":50000,"currency":"USD","days_to_payment":45,"counterparty":"ABC Electronics","exposure_type":"payable","base_rate":87,"current_inr_exposure":4350000,"risk_score":35,"risk_level":"medium"}
+{"amount":50000,"currency":"USD","days_to_payment":45,"counterparty":"ABC Electronics","exposure_type":"payable","base_rate":87,"current_inr_exposure":4350000,"risk_score":36,"risk_level":"medium"}
 ```
 
 The detailed runnable requests and failure example are in [API_EXAMPLES.md](API_EXAMPLES.md).

@@ -19,7 +19,7 @@ curl -X POST http://localhost:8000/api/analyze \
   "exposure_type": "payable",
   "base_rate": 87,
   "current_inr_exposure": 4350000,
-  "risk_score": 35,
+  "risk_score": 36,
   "risk_level": "medium"
 }
 ```
