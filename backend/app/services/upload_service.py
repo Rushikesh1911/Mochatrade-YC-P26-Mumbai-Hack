@@ -1,4 +1,5 @@
 from io import BytesIO
+from typing import Any
 
 import pandas as pd
 
@@ -6,14 +7,17 @@ import pandas as pd
 REQUIRED_COLUMNS = {"amount", "currency", "days_to_payment"}
 
 
-def parse_exposure_file(filename: str, content: bytes) -> dict:
+def parse_exposure_file(filename: str, content: bytes) -> tuple[dict[str, Any], int]:
     """Read the first row of a CSV/XLSX into the Phase 1 exposure contract."""
-    if filename.lower().endswith(".csv"):
-        frame = pd.read_csv(BytesIO(content))
-    elif filename.lower().endswith((".xlsx", ".xls")):
-        frame = pd.read_excel(BytesIO(content))
-    else:
-        raise ValueError("upload a CSV or Excel file")
+    try:
+        if filename.lower().endswith(".csv"):
+            frame = pd.read_csv(BytesIO(content))
+        elif filename.lower().endswith((".xlsx", ".xls")):
+            frame = pd.read_excel(BytesIO(content))
+        else:
+            raise ValueError("upload a CSV or Excel file")
+    except pd.errors.EmptyDataError as error:
+        raise ValueError("the uploaded file has no data rows") from error
     frame.columns = [str(column).strip().lower() for column in frame.columns]
     missing = REQUIRED_COLUMNS - set(frame.columns)
     if missing:
