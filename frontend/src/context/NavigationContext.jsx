@@ -11,6 +11,7 @@ const VALID_PAGES = [
   "risk-analysis",
   "scenarios",
   "hedge-advisor",
+  "charts",
   "alerts",
   "reports",
   "settings",
@@ -42,7 +43,7 @@ export function NavigationProvider({ children }) {
   }, [])
 
   const navigate = (pageId) => {
-    const normalized = pageId.toLowerCase().replace(/\s+/g, "-")
+    const normalized = pageId.toLowerCase().replace(/^\/+/, "").replace(/\s+/g, "-")
     if (VALID_PAGES.includes(normalized)) {
       setActivePage(normalized)
       window.location.hash = `#${normalized}`

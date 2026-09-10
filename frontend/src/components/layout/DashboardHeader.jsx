@@ -17,6 +17,7 @@ const pageTitles = {
   "risk-analysis": { title: "Risk Analysis", subtitle: "Value at Risk & stress analytics" },
   scenarios: { title: "Scenarios", subtitle: "What-if scenario simulation engine" },
   "hedge-advisor": { title: "Hedge Advisor", subtitle: "AI hedging recommendations & trade-offs" },
+  charts: { title: "Charts & Analytics", subtitle: "Financial risk visualizations and exposure insights" },
   alerts: { title: "Alerts", subtitle: "Threshold monitoring & corporate risk alerts" },
   reports: { title: "Reports", subtitle: "Treasury board summaries & audit trail" },
   settings: { title: "Settings", subtitle: "Appearance & platform preferences" },

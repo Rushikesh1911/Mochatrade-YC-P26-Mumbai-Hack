@@ -3,6 +3,7 @@ import { ThemeProvider } from "@/context/ThemeContext"
 import { NavigationProvider, useNavigation } from "@/context/NavigationContext"
 import { MainLayout } from "@/components/layout/MainLayout"
 import { DashboardPage } from "@/pages/DashboardPage"
+import { ChartsPage } from "@/pages/ChartsPage"
 import { SettingsPage } from "@/pages/SettingsPage"
 import { PlaceholderPage } from "@/pages/PlaceholderPage"
 
@@ -22,6 +23,8 @@ function AppContent() {
     switch (activePage) {
       case "dashboard":
         return <DashboardPage selectedPeriod={selectedPeriod} />
+      case "charts":
+        return <ChartsPage />
       case "settings":
         return <SettingsPage />
       case "exposure":

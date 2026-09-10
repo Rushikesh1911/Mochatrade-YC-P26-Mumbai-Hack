@@ -3,8 +3,9 @@ import {
   LayoutDashboard,
   Wallet,
   ShieldAlert,
-  ChartNoAxesCombined,
+  SlidersHorizontal,
   GitBranch,
+  ChartNoAxesCombined,
   Bell,
   FileText,
   Settings,
@@ -40,7 +41,7 @@ export const navItems = [
   {
     id: "scenarios",
     title: "Scenarios",
-    icon: ChartNoAxesCombined,
+    icon: SlidersHorizontal,
     badge: null,
   },
   {
@@ -48,6 +49,12 @@ export const navItems = [
     title: "Hedge Advisor",
     icon: GitBranch,
     badge: "AI",
+  },
+  {
+    id: "charts",
+    title: "Charts",
+    icon: ChartNoAxesCombined,
+    badge: "Live",
   },
   {
     id: "alerts",
@@ -116,6 +123,8 @@ export function SidebarNav({ isCollapsed = false, onItemClick }) {
               "rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide",
               isActive
                 ? "bg-blue-500/20 text-blue-600 dark:text-blue-300"
+                : item.badge === "Live"
+                ? "bg-blue-500/20 text-blue-600 dark:text-blue-400"
                 : item.badge === "7"
                 ? "bg-amber-500/20 text-amber-700 dark:text-amber-300"
                 : "bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
