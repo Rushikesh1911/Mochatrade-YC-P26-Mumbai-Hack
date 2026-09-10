@@ -1,4 +1,6 @@
-import { ErrorBoundary } from './components/Common'
-import HomePage from './pages/HomePage'
+import React from 'react'
+import DashboardPage from './pages/DashboardPage'
 
-export default function App() { return <ErrorBoundary><HomePage /></ErrorBoundary> }
+export default function App() {
+  return <DashboardPage />
+}
