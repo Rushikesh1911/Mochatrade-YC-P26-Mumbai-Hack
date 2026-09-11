@@ -1,17 +1,25 @@
 from io import BytesIO
-
 import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
+from unittest.mock import patch
 
 from backend.main import app
 
 client = TestClient(app)
 
+# We will apply a patch to all tests that hit /upload
+pytestmark = pytest.mark.usefixtures("mock_get_live_inr_rate")
+
+@pytest.fixture
+def mock_get_live_inr_rate():
+    with patch("app.api.v1.upload.get_live_inr_rate") as mock:
+        mock.return_value = 88.5
+        yield mock
 
 def test_upload_parses_csv_and_normalizes_headers():
     response = client.post(
-        "/api/upload?base_rate=88.5",
+        "/api/upload",
         files={"file": ("exposure.csv", b" Amount , Currency , Days_To_Payment , Counterparty\n50000,usd,45,ABC Electronics\n", "text/csv")},
     )
 
@@ -31,7 +39,7 @@ def test_upload_parses_xlsx():
 
     assert response.status_code == 200
     assert response.json()["exposure"]["amount"] == 1250
-    assert response.json()["exposure"]["base_rate"] == 87
+    assert response.json()["exposure"]["base_rate"] == 88.5
 
 
 def test_upload_rejects_missing_required_columns():
@@ -75,13 +83,3 @@ def test_upload_returns_422_for_malformed_numeric_cells(contents, expected_detai
 
     assert response.status_code == 422
     assert response.json()["detail"] == expected_detail
-
-
-@pytest.mark.parametrize("base_rate", [0, -1])
-def test_upload_rejects_non_positive_base_rate(base_rate):
-    response = client.post(
-        f"/api/upload?base_rate={base_rate}",
-        files={"file": ("exposure.csv", b"amount,currency,days_to_payment\n50,USD,1\n", "text/csv")},
-    )
-
-    assert response.status_code == 422
