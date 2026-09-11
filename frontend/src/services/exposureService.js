@@ -5,9 +5,7 @@
  * STRICTLY NO CLIENT-SIDE FINANCIAL RECALCULATIONS.
  */
 
-import { demoBatchUpload, demoAnalyzedExposures } from "@/data/exposure-demo"
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000"
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
 
 /**
  * Basic UX validation of uploaded file format
@@ -166,56 +164,26 @@ export async function uploadExposureFile(file, baseRate = 88.5) {
     throw new Error(formatCheck.error)
   }
 
-  // First try calling real backend if available
-  try {
-    const formData = new FormData()
-    formData.append("file", file)
+  // First try calling real backend
+  const formData = new FormData()
+  formData.append("file", file)
 
-    const response = await fetch(`${API_BASE_URL}/api/upload?base_rate=${encodeURIComponent(baseRate)}`, {
-      method: "POST",
-      body: formData,
-    })
+  const response = await fetch(`${API_BASE_URL}/api/v1/upload`, {
+    method: "POST",
+    body: formData,
+  })
 
-    if (response.ok) {
-      const data = await response.json()
-      // If backend returned conceptual batch response
-      if (data.rows_processed && data.exposures) {
-        return {
-          filename: file.name,
-          fileSize: `${(file.size / 1024).toFixed(1)} KB`,
-          fileType: file.type || "text/csv",
-          ...data,
-        }
-      }
-    }
-  } catch (backendError) {
-    console.info("Backend API /api/upload unreachable or prototype mode. Using client parser with demo fallback.")
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}))
+    throw new Error(err.detail || "Backend /api/upload failed.")
   }
 
-  // Client-side parser for CSV files
-  if (file.name.toLowerCase().endsWith(".csv")) {
-    try {
-      const text = await file.text()
-      const parsed = parseCsvText(text)
-      return {
-        filename: file.name,
-        fileSize: `${(file.size / 1024).toFixed(1)} KB`,
-        fileType: "text/csv",
-        ...parsed,
-      }
-    } catch (parseError) {
-      throw new Error(parseError.message || "Failed to parse exposure CSV file.")
-    }
-  }
-
-  // Simulated latency for XLSX / demo files
-  await new Promise((resolve) => setTimeout(resolve, 400))
-
+  const data = await response.json()
   return {
-    ...demoBatchUpload,
     filename: file.name,
     fileSize: `${(file.size / 1024).toFixed(1)} KB`,
-    fileType: file.type || "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    fileType: file.type || "text/csv",
+    ...data,
   }
 }
 
@@ -241,69 +209,21 @@ export async function analyzeExposures(exposures, baseRate = 88.5) {
   }
 
   // Attempt real backend call
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/analyze`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        exposures: validPayload,
-        base_rate: baseRate,
-      }),
-    })
-
-    if (response.ok) {
-      const data = await response.json()
-      if (Array.isArray(data.exposures)) {
-        return {
-          success: true,
-          analyzedCount: data.exposures.length,
-          exposures: data.exposures,
-        }
-      }
-    }
-  } catch (error) {
-    console.info("Backend API /api/analyze unreachable or prototype mode. Using simulated risk engine response.")
-  }
-
-  // Simulated server processing delay
-  await new Promise((resolve) => setTimeout(resolve, 600))
-
-  // Match with pre-calculated mock analyzed records or generate standard financial results
-  const currencyRates = {
-    USD: baseRate,
-    EUR: 96.2,
-    GBP: 114.5,
-    JPY: 0.58,
-    CHF: 101.4,
-  }
-
-  const analyzed = validPayload.map((exp, idx) => {
-    // Check if pre-calculated exists in demo data
-    const matched = demoAnalyzedExposures.find(
-      (d) => d.counterparty === exp.counterparty && d.currency === exp.currency
-    )
-
-    if (matched) {
-      return { ...exp, ...matched }
-    }
-
-    // Default prototype mapping returned from mock risk engine
-    const rate = currencyRates[exp.currency] || baseRate
-    const inrExposure = Math.round(exp.amount * rate)
-    const riskScore = Math.min(95, Math.max(35, Math.round(50 + (exp.days_to_payment < 7 ? 25 : 10))))
-    const riskLevel = riskScore >= 80 ? "HIGH" : riskScore >= 60 ? "MEDIUM" : "LOW"
-
-    return {
-      ...exp,
-      inr_exposure: inrExposure,
-      risk_score: riskScore,
-      risk_level: riskLevel,
-    }
+  const response = await fetch(`${API_BASE_URL}/api/v1/analyze`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(validPayload),
   })
 
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}))
+    throw new Error(err.detail || "Backend /api/analyze failed.")
+  }
+
+  const data = await response.json()
   return {
     success: true,
-    analyzedCount: analyzed.length,
-    exposures: analyzed,
+    analyzedCount: data.exposures?.length || 0,
+    exposures: data.exposures,
   }
 }
