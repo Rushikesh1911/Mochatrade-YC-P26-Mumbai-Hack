@@ -90,24 +90,19 @@ export function PlaceholderPage({ moduleId }) {
           </span>
         </div>
 
-        {/* Main Title */}
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2">
-          {info.title}
-        </h1>
-
         {/* Coming Soon Badge */}
-        <div className="my-3">
+        <div className="my-2">
           <Badge
             variant="outline"
             className="px-3 py-1 text-sm font-semibold tracking-wider uppercase border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-mono"
           >
-            Coming Soon
+            Module in Development
           </Badge>
         </div>
 
-        {/* Subtitle / Description */}
+        {/* Informative placeholder text */}
         <p className="text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto leading-relaxed mt-2 mb-8">
-          {info.subtitle}
+          This module is currently being configured as part of the HedgeMind enterprise suite. Core simulation models and reports will be available here soon.
         </p>
 
         {/* Navigation back */}

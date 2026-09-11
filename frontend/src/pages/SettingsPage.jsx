@@ -8,17 +8,7 @@ export function SettingsPage() {
   const { theme, setTheme } = useTheme()
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 py-4">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-          Settings
-        </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-          Manage system appearance and workspace preferences.
-        </p>
-      </div>
-
+    <div className="max-w-4xl mx-auto space-y-6 py-2">
       {/* Appearance Section */}
       <BentoCard className="p-6 sm:p-8 space-y-6">
         <div className="flex items-center gap-3 pb-4 border-b border-slate-200 dark:border-slate-800/80">

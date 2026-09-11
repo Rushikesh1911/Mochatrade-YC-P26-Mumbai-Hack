@@ -150,59 +150,36 @@ export function ExposurePage() {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* 1. Page Header (Section 2) */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 dark:border-slate-800/80 pb-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shadow-sm shadow-blue-500/5">
-            <Wallet className="h-5 w-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-                Exposure
-              </h1>
-              <span className="hidden sm:inline-flex items-center gap-1 rounded bg-blue-500/10 px-2 py-0.5 text-[10px] font-mono font-semibold text-blue-600 dark:text-blue-400 border border-blue-500/20">
-                <Layers className="h-3 w-3" />
-                INGESTION WORKFLOW
-              </span>
-            </div>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              Upload, validate, and analyze your financial exposure data.
-            </p>
-          </div>
-        </div>
+      {/* Page Actions Bar */}
+      <div className="flex items-center justify-end gap-2 pb-1">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            const fileInput = document.getElementById("exposure-file-input")
+            if (fileInput) fileInput.click()
+          }}
+          className="h-8 gap-1.5 text-xs font-semibold border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700"
+        >
+          <UploadCloud className="h-3.5 w-3.5 text-blue-500" />
+          <span>Upload File</span>
+        </Button>
 
-        {/* Header Actions */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              const fileInput = document.getElementById("exposure-file-input")
-              if (fileInput) fileInput.click()
-            }}
-            className="h-8 gap-1.5 text-xs font-semibold border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700"
-          >
-            <UploadCloud className="h-3.5 w-3.5 text-blue-500" />
-            <span>Upload File</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className="h-8 gap-1.5 text-xs font-semibold border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700"
-            aria-label="Refresh Exposure Data"
-          >
-            <RefreshCw
-              className={`h-3.5 w-3.5 text-blue-600 dark:text-blue-400 ${
-                isRefreshing ? "animate-spin" : ""
-              }`}
-            />
-            <span>Refresh</span>
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+          className="h-8 gap-1.5 text-xs font-semibold border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700"
+          aria-label="Refresh Exposure Data"
+        >
+          <RefreshCw
+            className={`h-3.5 w-3.5 text-blue-600 dark:text-blue-400 ${
+              isRefreshing ? "animate-spin" : ""
+            }`}
+          />
+          <span>Refresh</span>
+        </Button>
       </div>
 
       {/* 2. Processing Summary (4 Bento KPI Cards) */}

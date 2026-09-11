@@ -41,82 +41,59 @@ export function RiskAnalysisPage() {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* 1. Page Header (Section 4) */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 dark:border-slate-800/80 pb-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 shadow-sm shadow-red-500/5">
-            <ShieldAlert className="h-5 w-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-                Risk Analysis
-              </h1>
-              <span className="hidden sm:inline-flex items-center gap-1 rounded bg-blue-500/10 px-2 py-0.5 text-[10px] font-mono font-semibold text-blue-600 dark:text-blue-400 border border-blue-500/20">
-                <Activity className="h-3 w-3" />
-                QUANTIFY LAYER
-              </span>
-            </div>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              Quantify downside risk, stress-test exposures, and identify key risk drivers.
-            </p>
-          </div>
-        </div>
+      {/* Page Actions Bar (30 Days & Refresh) */}
+      <div className="flex items-center justify-end gap-2 pb-1">
+        {/* Period Selector Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 gap-1.5 text-xs font-semibold border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700"
+              aria-label="Select Period"
+            >
+              <Calendar className="h-3.5 w-3.5 text-slate-400" />
+              <span>{selectedPeriod}</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-32">
+            <DropdownMenuItem
+              onClick={() => setSelectedPeriod("7 Days")}
+              className={`cursor-pointer text-xs ${selectedPeriod === "7 Days" ? "font-bold text-blue-600 dark:text-blue-400" : ""}`}
+            >
+              7 Days
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setSelectedPeriod("30 Days")}
+              className={`cursor-pointer text-xs ${selectedPeriod === "30 Days" ? "font-bold text-blue-600 dark:text-blue-400" : ""}`}
+            >
+              30 Days
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setSelectedPeriod("90 Days")}
+              className={`cursor-pointer text-xs ${selectedPeriod === "90 Days" ? "font-bold text-blue-600 dark:text-blue-400" : ""}`}
+            >
+              90 Days
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-        {/* Header Actions: Period & Refresh */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          {/* Period Selector Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-8 gap-1.5 text-xs font-semibold border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700"
-                aria-label="Select Period"
-              >
-                <Calendar className="h-3.5 w-3.5 text-slate-400" />
-                <span>{selectedPeriod}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-32">
-              <DropdownMenuItem
-                onClick={() => setSelectedPeriod("7 Days")}
-                className={`cursor-pointer text-xs ${selectedPeriod === "7 Days" ? "font-bold text-blue-600 dark:text-blue-400" : ""}`}
-              >
-                7 Days
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setSelectedPeriod("30 Days")}
-                className={`cursor-pointer text-xs ${selectedPeriod === "30 Days" ? "font-bold text-blue-600 dark:text-blue-400" : ""}`}
-              >
-                30 Days
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setSelectedPeriod("90 Days")}
-                className={`cursor-pointer text-xs ${selectedPeriod === "90 Days" ? "font-bold text-blue-600 dark:text-blue-400" : ""}`}
-              >
-                90 Days
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Refresh Button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className="h-8 gap-1.5 text-xs font-semibold border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700"
-            aria-label="Refresh Risk Analysis"
-          >
-            <RefreshCw
-              className={`h-3.5 w-3.5 text-blue-600 dark:text-blue-400 ${
-                isRefreshing ? "animate-spin" : ""
-              }`}
-            />
-            <span>Refresh</span>
-          </Button>
-        </div>
+        {/* Refresh Button */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+          className="h-8 gap-1.5 text-xs font-semibold border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700"
+          aria-label="Refresh Risk Analysis"
+        >
+          <RefreshCw
+            className={`h-3.5 w-3.5 text-blue-600 dark:text-blue-400 ${
+              isRefreshing ? "animate-spin" : ""
+            }`}
+          />
+          <span>Refresh</span>
+        </Button>
       </div>
 
       {/* 2. Top Risk Metrics (Section 5: 4 Compact Bento Cards) */}

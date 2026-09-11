@@ -1,6 +1,5 @@
 import React, { useState } from "react"
 import {
-  ChartNoAxesCombined,
   RefreshCw,
   MoreHorizontal,
   Info,
@@ -56,59 +55,42 @@ export function ChartsPage() {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* 1. Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-200 dark:border-slate-800/80 pb-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-            <ChartNoAxesCombined className="h-5 w-5" />
-          </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-              Charts & Analytics
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              Financial risk visualizations and exposure insights
-            </p>
-          </div>
-        </div>
+      {/* Page Actions */}
+      <div className="flex items-center justify-end gap-2">
+        {/* Refresh button */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+          className="h-8 gap-1.5 text-xs border-slate-200 dark:border-slate-800"
+          aria-label="Refresh Data"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 text-blue-600 dark:text-blue-400 ${isRefreshing ? "animate-spin" : ""}`} />
+          <span>Refresh</span>
+        </Button>
 
-        {/* Top-Right Header Actions */}
-        <div className="flex items-center gap-2">
-          {/* Refresh button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className="h-8 gap-1.5 text-xs border-slate-200 dark:border-slate-800"
-            aria-label="Refresh Data"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 text-blue-600 dark:text-blue-400 ${isRefreshing ? "animate-spin" : ""}`} />
-            <span>Refresh</span>
-          </Button>
-
-          {/* More options menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
-                aria-label="More Options"
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem onClick={handleResetFilters} className="cursor-pointer text-xs">
-                Reset All Filters
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleRefresh} className="cursor-pointer text-xs">
-                Force Re-calculate
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        {/* More options menu */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
+              aria-label="More Options"
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuItem onClick={handleResetFilters} className="cursor-pointer text-xs">
+              Reset All Filters
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleRefresh} className="cursor-pointer text-xs">
+              Force Re-calculate
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* 2. Filter Toolbar */}

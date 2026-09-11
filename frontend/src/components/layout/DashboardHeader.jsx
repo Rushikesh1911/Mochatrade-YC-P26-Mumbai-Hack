@@ -1,56 +1,65 @@
 import React, { useState } from "react"
-import { RefreshCw, Calendar, ChevronDown, Menu, PanelLeft } from "lucide-react"
+import { Menu, PanelLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { AppSidebar } from "./AppSidebar"
 import { useNavigation } from "@/context/NavigationContext"
 
-const pageTitles = {
-  dashboard: { title: "Dashboard", subtitle: "Financial risk overview" },
-  exposure: { title: "Exposure", subtitle: "Foreign exchange & market exposure mapping" },
-  "risk-analysis": { title: "Risk Analysis", subtitle: "Value at Risk & stress analytics" },
-  scenarios: { title: "Scenarios", subtitle: "What-if scenario simulation engine" },
-  "hedge-advisor": { title: "Hedge Advisor", subtitle: "AI hedging recommendations & trade-offs" },
-  charts: { title: "Charts & Analytics", subtitle: "Financial risk visualizations and exposure insights" },
-  alerts: { title: "Alerts", subtitle: "Threshold monitoring & corporate risk alerts" },
-  reports: { title: "Reports", subtitle: "Treasury board summaries & audit trail" },
-  settings: { title: "Settings", subtitle: "Appearance & platform preferences" },
+export const pageTitles = {
+  dashboard: {
+    title: "Dashboard",
+    subtitle: "Financial risk overview",
+  },
+  exposure: {
+    title: "Exposure",
+    subtitle: "Foreign exchange & market exposure mapping",
+  },
+  "risk-analysis": {
+    title: "Risk Analysis",
+    subtitle: "Value at Risk & stress analytics",
+  },
+  scenarios: {
+    title: "Scenarios",
+    subtitle: "Simulate market movements and financial impact",
+  },
+  "hedge-advisor": {
+    title: "Hedge Advisor",
+    subtitle: "AI-assisted risk mitigation strategies",
+  },
+  charts: {
+    title: "Charts",
+    subtitle: "Financial risk visualizations and exposure insights",
+  },
+  alerts: {
+    title: "Alerts",
+    subtitle: "Monitor critical risk events and threshold breaches",
+  },
+  reports: {
+    title: "Reports",
+    subtitle: "Financial risk reports and portfolio summaries",
+  },
+  settings: {
+    title: "Settings",
+    subtitle: "Configure your HedgeMind workspace",
+  },
 }
 
 export function DashboardHeader({
-  selectedPeriod = "30D",
-  onPeriodChange,
-  onRefresh,
-  isRefreshing = false,
   isCollapsed = false,
   onToggleCollapse,
 }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const { activePage } = useNavigation()
 
-  const periodLabels = {
-    "7D": "7 Days",
-    "30D": "30 Days",
-    "90D": "90 Days",
-  }
-
   const currentMeta = pageTitles[activePage] || {
     title: activePage.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
-    subtitle: "Financial risk platform",
+    subtitle: "Corporate financial risk platform",
   }
 
-  const isExposure = activePage === "exposure"
-
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200 dark:border-slate-800/80 bg-white/80 dark:bg-slate-950/70 px-4 sm:px-6 backdrop-blur-xl transition-colors duration-200">
-      {/* Left: Mobile Drawer Trigger, Desktop Collapse Toggle & Page Title */}
-      <div className="flex items-center gap-2 sm:gap-3">
+    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200 dark:border-slate-800/80 bg-white/95 dark:bg-[#060911]/95 px-4 sm:px-6 backdrop-blur-xl transition-colors duration-200">
+      {/* Left: Mobile Drawer Trigger, Desktop Collapse Toggle & Page Title + One-line Description */}
+      <div className="flex items-center gap-3 sm:gap-4 min-w-0">
         {/* Mobile menu trigger */}
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger asChild>
@@ -68,7 +77,7 @@ export function DashboardHeader({
           </SheetContent>
         </Sheet>
 
-        {/* Desktop Hamburger Toggle (visible on desktop to quickly toggle sidebar) */}
+        {/* Desktop Hamburger / Collapse Toggle */}
         {onToggleCollapse && (
           <Button
             variant="ghost"
@@ -81,74 +90,16 @@ export function DashboardHeader({
           </Button>
         )}
 
-        <div>
-          <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white sm:text-xl">
+        {/* Global Page Title & One-Line Description */}
+        <div className="min-w-0 flex flex-col justify-center">
+          <h1 className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-snug truncate">
             {currentMeta.title}
           </h1>
-          {!isExposure && currentMeta.subtitle && (
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">
-              {currentMeta.subtitle}
-            </p>
-          )}
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-normal leading-tight truncate">
+            {currentMeta.subtitle}
+          </p>
         </div>
       </div>
-
-      {/* Right: Period selector & Refresh (omitted on Exposure page for clean minimal navbar) */}
-      {!isExposure && (
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Period Selector Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-8 gap-1.5 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 px-2.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
-              >
-                <Calendar className="h-3.5 w-3.5 text-slate-400" />
-                <span>{periodLabels[selectedPeriod] || selectedPeriod}</span>
-                <ChevronDown className="h-3.5 w-3.5 text-slate-400 opacity-80" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-32 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-md">
-              <DropdownMenuItem
-                onClick={() => onPeriodChange && onPeriodChange("7D")}
-                className={`cursor-pointer text-xs ${selectedPeriod === "7D" ? "text-blue-600 dark:text-blue-400 font-semibold" : "text-slate-700 dark:text-slate-300"}`}
-              >
-                7 Days
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => onPeriodChange && onPeriodChange("30D")}
-                className={`cursor-pointer text-xs ${selectedPeriod === "30D" ? "text-blue-600 dark:text-blue-400 font-semibold" : "text-slate-700 dark:text-slate-300"}`}
-              >
-                30 Days
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => onPeriodChange && onPeriodChange("90D")}
-                className={`cursor-pointer text-xs ${selectedPeriod === "90D" ? "text-blue-600 dark:text-blue-400 font-semibold" : "text-slate-700 dark:text-slate-300"}`}
-              >
-                90 Days
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Refresh Button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onRefresh}
-            disabled={isRefreshing}
-            className="h-8 gap-1.5 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 px-3 text-xs font-medium text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
-            aria-label="Refresh Risk Data"
-          >
-            <RefreshCw
-              className={`h-3.5 w-3.5 text-blue-600 dark:text-blue-400 ${
-                isRefreshing ? "animate-spin" : ""
-              }`}
-            />
-            <span className="hidden sm:inline">Refresh</span>
-          </Button>
-        </div>
-      )}
     </header>
   )
 }

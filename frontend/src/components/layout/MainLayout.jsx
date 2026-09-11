@@ -54,10 +54,6 @@ export function MainLayout({
         }`}
       >
         <DashboardHeader
-          selectedPeriod={selectedPeriod}
-          onPeriodChange={onPeriodChange}
-          onRefresh={onRefresh}
-          isRefreshing={isRefreshing}
           isCollapsed={isCollapsed}
           onToggleCollapse={toggleCollapse}
         />
