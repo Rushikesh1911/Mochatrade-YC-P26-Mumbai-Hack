@@ -7,6 +7,7 @@ import { ChartsPage } from "@/pages/ChartsPage"
 import { SettingsPage } from "@/pages/SettingsPage"
 import { RiskAnalysisPage } from "@/pages/RiskAnalysisPage"
 import { ExposurePage } from "@/pages/ExposurePage"
+import { ReportsPage } from "@/pages/ReportsPage"
 import { PlaceholderPage } from "@/pages/PlaceholderPage"
 
 function AppContent() {
@@ -33,10 +34,11 @@ function AppContent() {
         return <ExposurePage />
       case "settings":
         return <SettingsPage />
+      case "reports":
+        return <ReportsPage />
       case "scenarios":
       case "hedge-advisor":
       case "alerts":
-      case "reports":
         return <PlaceholderPage moduleId={activePage} />
       default:
         return <DashboardPage selectedPeriod={selectedPeriod} />
