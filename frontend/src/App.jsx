@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { ThemeProvider } from "@/context/ThemeContext"
 import { NavigationProvider, useNavigation } from "@/context/NavigationContext"
 import { MainLayout } from "@/components/layout/MainLayout"
+import { LandingPage } from "@/pages/LandingPage"
 import { DashboardPage } from "@/pages/DashboardPage"
 import { ChartsPage } from "@/pages/ChartsPage"
 import { SettingsPage } from "@/pages/SettingsPage"
@@ -20,6 +21,11 @@ function AppContent() {
     setTimeout(() => {
       setIsRefreshing(false)
     }, 600)
+  }
+
+  // Standalone Cinematic 3D Landing Page at /
+  if (activePage === "landing") {
+    return <LandingPage />
   }
 
   const renderCurrentPage = () => {
