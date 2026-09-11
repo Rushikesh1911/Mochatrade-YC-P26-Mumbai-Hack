@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { useApp } from "@/context/AppContext"
 import { BentoCard } from "@/components/aceternity/BentoCard"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -20,6 +21,7 @@ import {
 import { stressTestingScenarios } from "@/data/risk-analysis-demo"
 
 export function StressTesting() {
+  const { liveRiskScore, liveVolatility } = useApp()
   const [selectedScenarioId, setSelectedScenarioId] = useState("usd-plus-5")
   const [customShift, setCustomShift] = useState(6) // for custom scenario slider
 
@@ -29,11 +31,21 @@ export function StressTesting() {
 
   // Calculate dynamic values if custom
   const isCustom = selectedScenario.id === "custom"
-  const stressedScore = isCustom
-    ? Math.min(100, Math.max(30, 72 + Math.round(customShift * 2.4)))
+  
+  // Use live data if available and we are on the first scenario, else fallback
+  const baseScore = liveRiskScore || 72
+  const hasLiveVol = !!liveVolatility
+  const liveStressScore = hasLiveVol ? Math.min(100, baseScore + Math.round((liveVolatility.stress_cost_ratio || 0.05) * 200)) : null
+  
+  const stressedScore = hasLiveVol && selectedScenarioId === "usd-plus-5"
+    ? liveStressScore
+    : isCustom
+    ? Math.min(100, Math.max(30, baseScore + Math.round(customShift * 2.4)))
     : selectedScenario.stressedScore
 
-  const additionalImpact = isCustom
+  const additionalImpact = hasLiveVol && selectedScenarioId === "usd-plus-5"
+    ? `+₹${Math.round(liveVolatility.potential_additional_cost).toLocaleString()}`
+    : isCustom
     ? `${customShift >= 0 ? "+" : "-"}₹${Math.abs(customShift * 14).toFixed(0)} L`
     : selectedScenario.additionalImpact
 
@@ -145,7 +157,7 @@ export function StressTesting() {
             </span>
             <div className="flex items-baseline gap-1.5 mt-0.5">
               <span className="text-2xl font-black font-mono text-slate-900 dark:text-white">
-                72
+                {baseScore}
               </span>
               <span className="text-xs font-mono text-slate-400">/ 100</span>
             </div>
@@ -174,7 +186,7 @@ export function StressTesting() {
               <span className="text-xs font-mono text-slate-400">/ 100</span>
             </div>
             <span className="text-[10px] font-mono text-red-600 dark:text-red-400 mt-1 block">
-              {stressedScore > 72 ? `+${stressedScore - 72} pts shock` : `${stressedScore - 72} pts relief`}
+              {stressedScore > baseScore ? `+${stressedScore - baseScore} pts shock` : `${stressedScore - baseScore} pts relief`}
             </span>
           </div>
 
@@ -224,7 +236,7 @@ export function StressTesting() {
             </span>
             <div className="flex items-center gap-4 text-xs font-mono">
               <span className="text-slate-600 dark:text-slate-400">
-                Baseline: <strong className="text-slate-900 dark:text-white">72</strong>
+                Baseline: <strong className="text-slate-900 dark:text-white">{baseScore}</strong>
               </span>
               <ArrowRight className="h-3.5 w-3.5 text-slate-400" />
               <span className="text-red-600 dark:text-red-400">
@@ -237,12 +249,12 @@ export function StressTesting() {
           <div>
             <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mb-1">
               <span>BASELINE</span>
-              <span className="font-mono font-bold text-slate-800 dark:text-slate-200">72 / 100</span>
+              <span className="font-mono font-bold text-slate-800 dark:text-slate-200">{baseScore} / 100</span>
             </div>
             <div className="h-2.5 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
               <div
                 className="h-full bg-orange-500 rounded-full transition-all duration-500"
-                style={{ width: "72%" }}
+                style={{ width: `${baseScore}%` }}
               />
             </div>
           </div>

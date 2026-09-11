@@ -1,4 +1,5 @@
 import React from "react"
+import { useApp } from "@/context/AppContext"
 import { RiskScoreCard } from "./RiskScoreCard"
 import { ExposureCard } from "./ExposureCard"
 import { PotentialImpactCard } from "./PotentialImpactCard"
@@ -14,17 +15,18 @@ export function DashboardBentoGrid({
   selectedPeriod,
 }) {
   const { kpis, exposureTrend, riskBreakdown, currencyExposure, recentAlerts, upcomingPayments } = data
+  const { liveRiskScore, liveRiskLevel } = useApp()
 
   return (
     <div className="space-y-5 sm:space-y-6">
       {/* ROW 1: KPI Metrics (4 Cards) */}
       <section aria-label="Key Risk Indicators" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 sm:gap-5">
         <RiskScoreCard
-          score={kpis.overallRisk.score}
+          score={liveRiskScore !== null ? liveRiskScore : kpis.overallRisk.score}
           maxScore={kpis.overallRisk.maxScore}
-          level={kpis.overallRisk.level}
-          change={kpis.overallRisk.change}
-          period={kpis.overallRisk.period}
+          level={liveRiskLevel || kpis.overallRisk.level}
+          change={liveRiskScore !== null ? "Live" : kpis.overallRisk.change}
+          period={liveRiskScore !== null ? "from uploaded file" : kpis.overallRisk.period}
         />
         <ExposureCard
           value={kpis.totalExposure.value}

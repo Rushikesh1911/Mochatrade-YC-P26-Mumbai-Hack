@@ -19,9 +19,11 @@ import {
   uploadExposureFile,
   analyzeExposures,
 } from "@/services/exposureService"
-import { demoBatchUpload } from "@/data/exposure-demo"
+import { calculateVolatility } from "@/services/riskService"
+import { useApp } from "@/context/AppContext"
 
 export function ExposurePage() {
+  const { setLiveExposures, setLiveRiskScore, setLiveRiskLevel, setLiveVolatility } = useApp()
   const [uploadedFile, setUploadedFile] = useState(null)
   const [exposures, setExposures] = useState([])
   const [rejectedRows, setRejectedRows] = useState([])
@@ -68,28 +70,7 @@ export function ExposurePage() {
     }
   }
 
-  // Quick load demo batch
-  const handleLoadDemo = () => {
-    setIsProcessing(true)
-    setError(null)
-    setIsAnalyzed(false)
-    setProcessingStatus("Processing")
 
-    setTimeout(() => {
-      setUploadedFile({
-        filename: demoBatchUpload.filename,
-        fileSize: demoBatchUpload.fileSize,
-        fileType: demoBatchUpload.fileType,
-      })
-      setRowsProcessed(demoBatchUpload.rows_processed)
-      setAcceptedRows(demoBatchUpload.accepted_rows)
-      setRejectedRows(demoBatchUpload.rejected_rows)
-      setExposures(demoBatchUpload.exposures)
-      setColumnMapping(demoBatchUpload.column_mapping)
-      setProcessingStatus("Validation Issues")
-      setIsProcessing(false)
-    }, 300)
-  }
 
   // Handle batch analysis submission
   const handleAnalyze = async () => {
@@ -116,7 +97,25 @@ export function ExposurePage() {
         })
 
         setExposures(updatedExposures)
+        setLiveExposures(updatedExposures)
         setIsAnalyzed(true)
+
+        // Calculate aggregate risk score for dashboard
+        const totalScore = updatedExposures.reduce((acc, exp) => acc + (exp.risk_score || 0), 0)
+        const avgScore = Math.round(totalScore / updatedExposures.length)
+        setLiveRiskScore(avgScore)
+        setLiveRiskLevel(avgScore >= 80 ? "HIGH" : avgScore >= 60 ? "MEDIUM" : "LOW")
+
+        // Fetch real historical volatility for the primary exposure to populate Stress Testing
+        const primary = updatedExposures.find(e => e.status === "Valid") || updatedExposures[0]
+        if (primary) {
+          try {
+            const volData = await calculateVolatility(primary.currency, "INR", 30, primary.amount)
+            setLiveVolatility({ ...volData, currency: primary.currency, amount: primary.amount })
+          } catch(e) {
+            console.error("Volatility fetch failed", e)
+          }
+        }
       }
     } catch (err) {
       setError(err.message || "Financial analysis execution failed.")
@@ -195,7 +194,6 @@ export function ExposurePage() {
         {/* Upload Component */}
         <ExposureUpload
           onFileSelected={handleFileSelected}
-          onLoadDemo={handleLoadDemo}
           uploadedFile={uploadedFile}
           isProcessing={isProcessing}
           error={error}
@@ -213,17 +211,8 @@ export function ExposurePage() {
               No exposure data yet
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-1 mb-4 leading-relaxed">
-              Upload a CSV or XLSX file above to begin analyzing your financial exposure, or use the demo batch.
+              Upload a CSV or XLSX file above to begin analyzing your financial exposure.
             </p>
-            <Button
-              variant="default"
-              size="sm"
-              onClick={handleLoadDemo}
-              className="gap-2 text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Load 25 Demo Exposures</span>
-            </Button>
           </BentoCard>
         )}
 
