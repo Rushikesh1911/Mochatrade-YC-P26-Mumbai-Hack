@@ -1,11 +1,12 @@
 import React from "react"
 import { motion } from "framer-motion"
-import { ArrowRight, ShieldCheck } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { useNavigation } from "@/context/NavigationContext"
 
 /**
  * HeroContent - Clean, authoritative fintech hero messaging
  * Exact specifications:
+ * - Top-left branding pill removed completely as requested
  * - Headline: HedgeMind
  * - Supporting: AI Copilot for Corporate Financial Risk
  * - Description: See exposure. Simulate risk. Make smarter financial decisions.
@@ -25,8 +26,8 @@ export function HeroContent() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.18,
-        delayChildren: 0.1,
+        staggerChildren: 0.15,
+        delayChildren: 0.05,
       },
     },
   }
@@ -50,21 +51,6 @@ export function HeroContent() {
       animate="visible"
       className="flex flex-col justify-center items-start max-w-xl z-10"
     >
-      {/* Top HedgeMind Identity Pill */}
-      <motion.div variants={itemVariants} className="mb-6 inline-flex items-center gap-2.5">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 shadow-md shadow-blue-900/40 text-white font-bold text-base border border-blue-400/20">
-          H
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold tracking-wide text-slate-300">
-            HedgeMind
-          </span>
-          <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-[11px] font-semibold text-blue-400 border border-blue-500/20">
-            ENTERPRISE RISK
-          </span>
-        </div>
-      </motion.div>
-
       {/* Main Headline */}
       <motion.h1
         variants={itemVariants}
@@ -89,7 +75,7 @@ export function HeroContent() {
         See exposure. Simulate risk. Make smarter financial decisions.
       </motion.p>
 
-      {/* Primary CTA - The ONLY button on the page */}
+      {/* Primary CTA - The ONLY button in the hero */}
       <motion.div variants={itemVariants}>
         <button
           id="view-dashboard-btn"
