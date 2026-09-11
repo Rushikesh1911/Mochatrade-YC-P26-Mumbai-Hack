@@ -1,6 +1,7 @@
 from io import BytesIO
 
 import pandas as pd
+import pytest
 from fastapi.testclient import TestClient
 
 from backend.main import app
@@ -48,3 +49,39 @@ def test_upload_rejects_empty_and_unsupported_files():
     assert empty.json()["detail"] == "the uploaded file has no data rows"
     assert unsupported.status_code == 422
     assert unsupported.json()["detail"] == "upload a CSV or Excel file"
+
+
+def test_upload_accepts_formatted_amount_and_float_excel_day_count():
+    response = client.post(
+        "/api/upload",
+        files={"file": ("exposure.csv", b'amount,currency,days_to_payment\n"$50,000",USD,45.0\n', "text/csv")},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["exposure"]["amount"] == 50_000
+    assert response.json()["exposure"]["days_to_payment"] == 45
+
+
+@pytest.mark.parametrize(
+    ("contents", "expected_detail"),
+    [
+        (b"amount,currency,days_to_payment\n,USD,45\n", "amount is required"),
+        (b"amount,currency,days_to_payment\nnot-money,USD,45\n", "amount must be a valid number"),
+        (b"amount,currency,days_to_payment\n50000,USD,45.5\n", "days_to_payment must be a whole number"),
+    ],
+)
+def test_upload_returns_422_for_malformed_numeric_cells(contents, expected_detail):
+    response = client.post("/api/upload", files={"file": ("exposure.csv", contents, "text/csv")})
+
+    assert response.status_code == 422
+    assert response.json()["detail"] == expected_detail
+
+
+@pytest.mark.parametrize("base_rate", [0, -1])
+def test_upload_rejects_non_positive_base_rate(base_rate):
+    response = client.post(
+        f"/api/upload?base_rate={base_rate}",
+        files={"file": ("exposure.csv", b"amount,currency,days_to_payment\n50,USD,1\n", "text/csv")},
+    )
+
+    assert response.status_code == 422

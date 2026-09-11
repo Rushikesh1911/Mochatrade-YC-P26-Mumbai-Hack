@@ -47,7 +47,7 @@ class ScenarioResponse(AnalysisResponse):
 
 class MitigationInput(ScenarioInput):
     hedge_ratio: float = Field(ge=0, le=1, description="Illustrative portion protected, from 0 to 1")
-    assumed_hedge_rate: float = Field(gt=0, description="Explicit illustrative USD/INR hedge-rate assumption")
+    assumed_hedge_rate: float = Field(gt=0, description="Explicit illustrative USD/INR protected-rate assumption")
 
 
 class MitigationResponse(ScenarioResponse):
@@ -55,6 +55,8 @@ class MitigationResponse(ScenarioResponse):
     assumed_hedge_rate: float
     hedged_portion: float
     unhedged_portion: float
+    protected_cost: float
+    unprotected_cost: float
     illustrative_hedged_scenario_cost: float
     illustrative_benefit: float
     disclaimer: str

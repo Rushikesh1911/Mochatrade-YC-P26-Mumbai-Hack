@@ -15,7 +15,9 @@ def test_mitigate_returns_illustrative_partial_hedge_comparison():
     assert response.status_code == 200
     assert response.json()["illustrative_hedged_scenario_cost"] == 4_500_000
     assert response.json()["illustrative_benefit"] == 150_000
-    assert "Illustrative model only" in response.json()["disclaimer"]
+    assert response.json()["protected_cost"] == 2_175_000
+    assert response.json()["unprotected_cost"] == 2_325_000
+    assert "Illustrative scenario model" in response.json()["disclaimer"]
 
 
 @pytest.mark.parametrize("hedge_ratio", [-0.01, 1.01])

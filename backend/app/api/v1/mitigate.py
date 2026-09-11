@@ -6,7 +6,7 @@ from risk_engine import FXExposure, calculate_fx_analysis, calculate_illustrativ
 router = APIRouter(tags=["mitigation"])
 
 ILLUSTRATIVE_DISCLAIMER = (
-    "Illustrative model only: assumed hedge rate is not live, executable derivative pricing or financial advice."
+    "Illustrative scenario model. The assumed protected rate is not a live derivative quote or execution price."
 )
 
 
@@ -33,6 +33,8 @@ def mitigate_exposure(payload: MitigationInput) -> MitigationResponse:
         rate_change_percent=scenario.rate_change_percent,
         hedged_portion=result.hedged_portion,
         unhedged_portion=result.unhedged_portion,
+        protected_cost=result.protected_cost,
+        unprotected_cost=result.unprotected_cost,
         illustrative_hedged_scenario_cost=result.illustrative_hedged_scenario_cost,
         illustrative_benefit=result.illustrative_benefit,
         disclaimer=ILLUSTRATIVE_DISCLAIMER,

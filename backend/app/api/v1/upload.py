@@ -1,4 +1,4 @@
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, File, HTTPException, Query, UploadFile
 
 from app.api.schemas import ExposureInput, UploadResponse
 from app.services.upload_service import parse_exposure_file
@@ -7,7 +7,7 @@ router = APIRouter(tags=["upload"])
 
 
 @router.post("/upload", response_model=UploadResponse)
-async def upload_exposure(file: UploadFile = File(...), base_rate: float = 87) -> UploadResponse:
+async def upload_exposure(file: UploadFile = File(...), base_rate: float = Query(default=87.0, gt=0)) -> UploadResponse:
     try:
         parsed, row_count = parse_exposure_file(file.filename or "", await file.read())
         exposure = ExposureInput(**parsed, base_rate=base_rate)

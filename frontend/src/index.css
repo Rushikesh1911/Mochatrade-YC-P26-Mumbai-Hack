@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono&family=Manrope:wght@400;500;600;700;800&display=swap');
 @import './styles/variables.css';
 @import './styles/themes.css';
+@import './styles/workflow.css';
 
 :root { font-family: Manrope, sans-serif; color: #eaf2ed; background: #09110d; font-synthesis: none; }
 * { box-sizing: border-box; } body { margin: 0; min-width: 320px; background: radial-gradient(circle at 85% 2%, #164c38 0, transparent 27rem), #09110d; }
