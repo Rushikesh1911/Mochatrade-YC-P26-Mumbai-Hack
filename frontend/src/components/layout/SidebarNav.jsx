@@ -30,7 +30,7 @@ export const navItems = [
     id: "exposure",
     title: "Exposure",
     icon: Wallet,
-    badge: "Next",
+    badge: null,
   },
   {
     id: "risk-analysis",

@@ -5,6 +5,8 @@ import { MainLayout } from "@/components/layout/MainLayout"
 import { DashboardPage } from "@/pages/DashboardPage"
 import { ChartsPage } from "@/pages/ChartsPage"
 import { SettingsPage } from "@/pages/SettingsPage"
+import { RiskAnalysisPage } from "@/pages/RiskAnalysisPage"
+import { ExposurePage } from "@/pages/ExposurePage"
 import { PlaceholderPage } from "@/pages/PlaceholderPage"
 
 function AppContent() {
@@ -25,10 +27,12 @@ function AppContent() {
         return <DashboardPage selectedPeriod={selectedPeriod} />
       case "charts":
         return <ChartsPage />
+      case "risk-analysis":
+        return <RiskAnalysisPage />
+      case "exposure":
+        return <ExposurePage />
       case "settings":
         return <SettingsPage />
-      case "exposure":
-      case "risk-analysis":
       case "scenarios":
       case "hedge-advisor":
       case "alerts":
