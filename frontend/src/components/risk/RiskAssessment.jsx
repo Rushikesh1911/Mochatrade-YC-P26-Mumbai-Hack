@@ -1,5 +1,7 @@
-import React from "react"
+import React, { useState } from "react"
+import { useApp } from "@/context/AppContext"
 import { BentoCard } from "@/components/aceternity/BentoCard"
+import { explainRisk } from "@/services/riskService"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -11,11 +13,33 @@ import {
   Eye,
   CheckCircle2,
   Sparkles,
+  RefreshCw,
 } from "lucide-react"
 import { useNavigation } from "@/context/NavigationContext"
 import { riskAssessmentData } from "@/data/risk-analysis-demo"
 
 export function RiskAssessment({ data = riskAssessmentData }) {
+  const { liveRiskScore, liveExposures } = useApp()
+  const [aiExplanation, setAiExplanation] = useState(null)
+  const [isExplaining, setIsExplaining] = useState(false)
+
+  const handleExplain = async () => {
+    if (!liveExposures || liveExposures.length === 0) return
+    setIsExplaining(true)
+    try {
+      const summary = await explainRisk({
+        risk_score: liveRiskScore || 72,
+        exposures: liveExposures,
+      })
+      setAiExplanation(summary)
+    } catch (e) {
+      console.error(e)
+      setAiExplanation("AI analysis temporarily unavailable.")
+    } finally {
+      setIsExplaining(false)
+    }
+  }
+
   const { navigate } = useNavigation()
 
   const {
@@ -43,6 +67,32 @@ export function RiskAssessment({ data = riskAssessmentData }) {
       className="flex flex-col justify-between"
     >
       <div>
+        {/* AI Assistant Box */}
+        <div className="rounded-xl border border-purple-500/20 bg-purple-50/50 dark:bg-purple-950/20 p-4 mb-4">
+          <div className="flex items-start gap-4">
+            <div className="flex-1 space-y-2">
+              <h3 className="font-semibold text-slate-900 dark:text-white">
+                AI Risk Assistant
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                {aiExplanation ? aiExplanation : "Click below to generate a human-readable explanation of your current exposure risk profile using Google Gemini."}
+              </p>
+            </div>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+              <Sparkles className="h-5 w-5" />
+            </div>
+          </div>
+
+          <button 
+            onClick={handleExplain}
+            disabled={isExplaining || !liveExposures || liveExposures.length === 0}
+            className="mt-4 w-full flex items-center justify-center gap-2 rounded-lg bg-slate-900 dark:bg-white px-4 py-2 text-sm font-semibold text-white dark:text-slate-900 transition-colors hover:bg-slate-800 dark:hover:bg-slate-200 disabled:opacity-50"
+          >
+            {isExplaining ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+            {isExplaining ? "Analyzing Context..." : "Explain Risk"}
+          </button>
+        </div>
+
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-4 border-b border-slate-100 dark:border-slate-800/80">
           <div>

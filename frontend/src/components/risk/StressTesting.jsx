@@ -19,11 +19,44 @@ import {
   Info,
 } from "lucide-react"
 import { stressTestingScenarios } from "@/data/risk-analysis-demo"
+import { simulateScenario } from "@/services/riskService"
 
 export function StressTesting() {
-  const { liveRiskScore, liveVolatility } = useApp()
+  const { liveRiskScore, liveVolatility, liveExposures } = useApp()
   const [selectedScenarioId, setSelectedScenarioId] = useState("usd-plus-5")
   const [customShift, setCustomShift] = useState(6) // for custom scenario slider
+  const [simulationResult, setSimulationResult] = useState(null)
+  const [isSimulating, setIsSimulating] = useState(false)
+
+  // Debounced Simulation Effect
+  React.useEffect(() => {
+    if (selectedScenarioId !== "custom" || !liveExposures || liveExposures.length === 0) return
+
+    const timeoutId = setTimeout(async () => {
+      setIsSimulating(true)
+      try {
+        const primary = liveExposures[0]
+        const baseRate = 88.5
+        const scenarioRate = baseRate * (1 + (customShift / 100))
+        
+        const res = await simulateScenario({
+          amount: primary.amount,
+          currency: primary.currency,
+          days_to_payment: primary.days_to_payment,
+          exposure_type: primary.exposure_type || "payable",
+          base_rate: baseRate,
+          scenario_rate: scenarioRate
+        })
+        setSimulationResult(res)
+      } catch(err) {
+        console.error("Simulation failed:", err)
+      } finally {
+        setIsSimulating(false)
+      }
+    }, 500)
+
+    return () => clearTimeout(timeoutId)
+  }, [customShift, selectedScenarioId, liveExposures])
 
   const selectedScenario =
     stressTestingScenarios.find((s) => s.id === selectedScenarioId) ||
@@ -40,13 +73,13 @@ export function StressTesting() {
   const stressedScore = hasLiveVol && selectedScenarioId === "usd-plus-5"
     ? liveStressScore
     : isCustom
-    ? Math.min(100, Math.max(30, baseScore + Math.round(customShift * 2.4)))
+    ? (simulationResult ? simulationResult.risk_score : Math.min(100, Math.max(30, baseScore + Math.round(customShift * 2.4))))
     : selectedScenario.stressedScore
 
   const additionalImpact = hasLiveVol && selectedScenarioId === "usd-plus-5"
     ? `+₹${Math.round(liveVolatility.potential_additional_cost).toLocaleString()}`
     : isCustom
-    ? `${customShift >= 0 ? "+" : "-"}₹${Math.abs(customShift * 14).toFixed(0)} L`
+    ? (simulationResult ? `${simulationResult.rate_change > 0 ? "+" : ""}₹${Math.round(simulationResult.additional_unhedged_cost).toLocaleString()}` : `${customShift >= 0 ? "+" : "-"}₹${Math.abs(customShift * 14).toFixed(0)} L`)
     : selectedScenario.additionalImpact
 
   const riskLevel =

@@ -18,6 +18,7 @@ import { AnalysisStatus } from "@/components/exposure/AnalysisStatus"
 import {
   uploadExposureFile,
   analyzeExposures,
+  extractExposureFromText
 } from "@/services/exposureService"
 import { calculateVolatility } from "@/services/riskService"
 import { useApp } from "@/context/AppContext"
@@ -70,7 +71,37 @@ export function ExposurePage() {
     }
   }
 
+  // Handle Magic Text Extract
+  const handleExtractText = async (text) => {
+    setIsProcessing(true)
+    setError(null)
+    setProcessingStatus("Processing")
 
+    try {
+      const extracted = await extractExposureFromText(text)
+      
+      // Structure it to look like a parsed row
+      const newExposure = {
+        id: `row-ai-${Date.now()}`,
+        row: exposures.length + 1,
+        counterparty: extracted.counterparty || "Unknown AI",
+        currency: extracted.currency || "USD",
+        amount: extracted.amount || 0,
+        days_to_payment: extracted.days_to_payment || 30,
+        status: "Valid",
+      }
+
+      setExposures([...exposures, newExposure])
+      setAcceptedRows(prev => prev + 1)
+      setRowsProcessed(prev => prev + 1)
+      setProcessingStatus("Validated")
+    } catch (err) {
+      setError(err.message || "Failed to extract exposure from text.")
+      setProcessingStatus("Error")
+    } finally {
+      setIsProcessing(false)
+    }
+  }
 
   // Handle batch analysis submission
   const handleAnalyze = async () => {
@@ -194,6 +225,7 @@ export function ExposurePage() {
         {/* Upload Component */}
         <ExposureUpload
           onFileSelected={handleFileSelected}
+          onExtractText={handleExtractText}
           uploadedFile={uploadedFile}
           isProcessing={isProcessing}
           error={error}

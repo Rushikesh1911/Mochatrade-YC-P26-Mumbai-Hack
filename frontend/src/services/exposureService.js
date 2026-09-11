@@ -227,3 +227,26 @@ export async function analyzeExposures(exposures, baseRate = 88.5) {
     exposures: data.exposures,
   }
 }
+
+/**
+ * Send raw text to the backend to be extracted into a structured exposure using Gemini AI
+ */
+export async function extractExposureFromText(text) {
+  if (!text || text.trim().length === 0) {
+    throw new Error("Text cannot be empty.")
+  }
+
+  const response = await fetch(`${API_BASE_URL}/api/v1/extract`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text }),
+  })
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}))
+    throw new Error(err.detail || "Backend /api/extract failed.")
+  }
+
+  const data = await response.json()
+  return data
+}

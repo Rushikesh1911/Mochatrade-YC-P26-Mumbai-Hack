@@ -26,6 +26,7 @@ import { TailRiskAnalysis } from "@/components/risk/TailRiskAnalysis"
 import { RiskConcentration } from "@/components/risk/RiskConcentration"
 import { RiskThresholds } from "@/components/risk/RiskThresholds"
 import { RiskAssessment } from "@/components/risk/RiskAssessment"
+import { MitigationPanel } from "@/components/risk/MitigationPanel"
 import { topRiskMetrics } from "@/data/risk-analysis-demo"
 
 export function RiskAnalysisPage() {
@@ -131,10 +132,13 @@ export function RiskAnalysisPage() {
           </div>
         </div>
 
-        {/* ROW 4: Large Tail Risk Analysis (8 cols) + Medium Risk Concentration (4 cols) */}
+        {/* ROW 4: Large Tail Risk Analysis (4 cols) + Mitigation (4 cols) + Medium Risk Concentration (4 cols) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          <div className="lg:col-span-8">
+          <div className="lg:col-span-4">
             <TailRiskAnalysis />
+          </div>
+          <div className="lg:col-span-4">
+            <MitigationPanel />
           </div>
           <div className="lg:col-span-4">
             <RiskConcentration />
