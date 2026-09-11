@@ -34,17 +34,34 @@ score = min(100, size_points + timing_points)
 
 The fixed ₹10,000,000 business scale is a prototype assumption. Risk levels are low (0–34), medium (35–69), and high (70–100).
 
-## Reserved Phase 2/3 formulas
+## Phase 2 — unhedged scenario formulas
 
-For a scenario rate `R1`, hedge ratio `H` (0–1), and explicitly assumed hedge rate `Rh`:
+For a scenario rate `R1`:
 
 ```text
 Unhedged scenario cost = E × R1
 Additional unhedged cost = E × (R1 − R0)
-Hedged portion = E × H
-Unhedged portion = E × (1 − H)
-Illustrative hedged scenario cost = (E × H × Rh) + (E × (1 − H) × R1)
+Rate change = R1 − R0
+Rate change percentage = ((R1 − R0) / R0) × 100
+```
+
+`R1` is a user-supplied scenario assumption. It is neither a forecast nor a live market quote.
+
+## Phase 3 — illustrative mitigation formulas
+
+For hedge ratio `H` (0–1), assumed protected rate `Rh`, and scenario rate `R1`:
+
+```text
+Protected amount = E × H
+Unprotected amount = E × (1 − H)
+Protected cost = Protected amount × Rh
+Unprotected cost = Unprotected amount × R1
+Illustrative hedged scenario cost = Protected cost + Unprotected cost
 Illustrative benefit = (E × R1) − hedged scenario cost
 ```
 
+The scenario rate is never used for the protected portion. At a 100% hedge, the illustrative hedged cost is therefore unchanged when the scenario rate changes. At 0%, it equals the unhedged scenario cost.
+
 `Rh` is an explicit configurable illustrative assumption, potentially equal to `R0` for the demo. It is not a live or executable derivative price.
+
+The API returns this disclaimer with every mitigation response: **Illustrative scenario model. The assumed protected rate is not a live derivative quote or execution price.**
