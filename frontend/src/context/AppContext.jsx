@@ -7,12 +7,14 @@ export function AppProvider({ children }) {
   const [liveRiskScore, setLiveRiskScore] = useState(null)
   const [liveRiskLevel, setLiveRiskLevel] = useState(null)
   const [liveVolatility, setLiveVolatility] = useState(null)
+  const [liveMitigation, setLiveMitigation] = useState(null)
   
   const value = {
     liveExposures, setLiveExposures,
     liveRiskScore, setLiveRiskScore,
     liveRiskLevel, setLiveRiskLevel,
-    liveVolatility, setLiveVolatility
+    liveVolatility, setLiveVolatility,
+    liveMitigation, setLiveMitigation
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

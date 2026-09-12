@@ -179,11 +179,28 @@ export async function uploadExposureFile(file, baseRate = 88.5) {
   }
 
   const data = await response.json()
+  
+  // Format the exposures for the frontend table
+  const exposures = (data.exposures || []).map((exp, idx) => ({
+    id: `row-${idx + 1}`,
+    row: idx + 1,
+    counterparty: exp.counterparty || `Counterparty-${idx + 1}`,
+    currency: exp.currency,
+    amount: exp.amount,
+    days_to_payment: exp.days_to_payment,
+    base_rate: exp.base_rate,
+    status: "Valid"
+  }))
+
   return {
     filename: file.name,
     fileSize: `${(file.size / 1024).toFixed(1)} KB`,
     fileType: file.type || "text/csv",
-    ...data,
+    rows_processed: data.rows_processed,
+    accepted_rows: exposures.length,
+    rejected_rows: [],
+    column_mapping: null,
+    exposures,
   }
 }
 
@@ -202,6 +219,7 @@ export async function analyzeExposures(exposures, baseRate = 88.5) {
       currency: e.currency,
       amount: e.amount,
       days_to_payment: e.days_to_payment,
+      base_rate: e.base_rate,
     }))
 
   if (validPayload.length === 0) {
@@ -209,6 +227,7 @@ export async function analyzeExposures(exposures, baseRate = 88.5) {
   }
 
   // Attempt real backend call
+  console.log("Analyzing exposures payload:", JSON.stringify(validPayload, null, 2))
   const response = await fetch(`${API_BASE_URL}/api/v1/analyze`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -217,7 +236,8 @@ export async function analyzeExposures(exposures, baseRate = 88.5) {
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({}))
-    throw new Error(err.detail || "Backend /api/analyze failed.")
+    console.error("Analyze error:", err)
+    throw new Error(err.detail ? JSON.stringify(err.detail) : "Backend /api/analyze failed.")
   }
 
   const data = await response.json()

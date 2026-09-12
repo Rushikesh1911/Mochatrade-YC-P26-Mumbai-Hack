@@ -1,9 +1,16 @@
 import React from "react"
+import { useApp } from "@/context/AppContext"
 import { Dashboard } from "@/components/dashboard/Dashboard"
-import { dashboardData } from "@/data/dashboard-demo"
 
 export function DashboardPage({ selectedPeriod = "30D" }) {
-  return <Dashboard data={dashboardData} selectedPeriod={selectedPeriod} />
+  const { liveExposures, liveRiskScore, liveVolatility } = useApp()
+  return (
+    <Dashboard 
+      exposures={liveExposures} 
+      riskScore={liveRiskScore} 
+      volatility={liveVolatility} 
+    />
+  )
 }
 
 export default DashboardPage

@@ -22,19 +22,25 @@ import {
 } from "@/services/exposureService"
 import { calculateVolatility } from "@/services/riskService"
 import { useApp } from "@/context/AppContext"
+import { toast } from "sonner"
 
 export function ExposurePage() {
-  const { setLiveExposures, setLiveRiskScore, setLiveRiskLevel, setLiveVolatility } = useApp()
-  const [uploadedFile, setUploadedFile] = useState(null)
-  const [exposures, setExposures] = useState([])
+  const { liveExposures, setLiveExposures, setLiveRiskScore, setLiveRiskLevel, setLiveVolatility } = useApp()
+  
+  // Check if we have existing analyzed data in the global context
+  const hasExistingData = liveExposures && liveExposures.length > 0
+  const hasAnalyzedData = hasExistingData && liveExposures.some(e => e.risk_score !== undefined)
+
+  const [uploadedFile, setUploadedFile] = useState(hasExistingData ? { filename: "Previously Uploaded", fileSize: "-", fileType: "text/csv" } : null)
+  const [exposures, setExposures] = useState(liveExposures || [])
   const [rejectedRows, setRejectedRows] = useState([])
-  const [rowsProcessed, setRowsProcessed] = useState(0)
-  const [acceptedRows, setAcceptedRows] = useState(0)
-  const [processingStatus, setProcessingStatus] = useState("Ready")
+  const [rowsProcessed, setRowsProcessed] = useState(hasExistingData ? liveExposures.length : 0)
+  const [acceptedRows, setAcceptedRows] = useState(hasExistingData ? liveExposures.length : 0)
+  const [processingStatus, setProcessingStatus] = useState(hasExistingData ? "Validated" : "Ready")
   const [columnMapping, setColumnMapping] = useState(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
-  const [isAnalyzed, setIsAnalyzed] = useState(false)
+  const [isAnalyzed, setIsAnalyzed] = useState(hasAnalyzedData)
   const [error, setError] = useState(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
 
@@ -60,12 +66,15 @@ export function ExposurePage() {
 
       if (result.rejected_rows && result.rejected_rows.length > 0) {
         setProcessingStatus("Validation Issues")
+        toast.warning("File processed with validation issues")
       } else {
         setProcessingStatus("Validated")
+        toast.success("Exposure data loaded successfully")
       }
     } catch (err) {
       setError(err.message || "Failed to parse exposure file.")
       setProcessingStatus("Error")
+      toast.error("Failed to load exposure data")
     } finally {
       setIsProcessing(false)
     }
@@ -88,6 +97,8 @@ export function ExposurePage() {
         currency: extracted.currency || "USD",
         amount: extracted.amount || 0,
         days_to_payment: extracted.days_to_payment || 30,
+        exposure_type: extracted.exposure_type || "payable",
+        base_rate: extracted.base_rate,
         status: "Valid",
       }
 
@@ -95,9 +106,11 @@ export function ExposurePage() {
       setAcceptedRows(prev => prev + 1)
       setRowsProcessed(prev => prev + 1)
       setProcessingStatus("Validated")
+      toast.success("AI extraction completed")
     } catch (err) {
       setError(err.message || "Failed to extract exposure from text.")
       setProcessingStatus("Error")
+      toast.error("Failed to extract text via AI")
     } finally {
       setIsProcessing(false)
     }
@@ -107,6 +120,9 @@ export function ExposurePage() {
   const handleAnalyze = async () => {
     setIsAnalyzing(true)
     setError(null)
+
+    // Artificial delay for UX to show risk engine processing steps
+    await new Promise(resolve => setTimeout(resolve, 4500))
 
     try {
       const result = await analyzeExposures(exposures)
@@ -119,7 +135,7 @@ export function ExposurePage() {
           if (analyzedMatch) {
             return {
               ...exp,
-              inr_exposure: analyzedMatch.inr_exposure,
+              inr_exposure: analyzedMatch.current_inr_exposure,
               risk_score: analyzedMatch.risk_score,
               risk_level: analyzedMatch.risk_level,
             }
@@ -147,9 +163,12 @@ export function ExposurePage() {
             console.error("Volatility fetch failed", e)
           }
         }
+        
+        toast.success("Risk engine analysis completed")
       }
     } catch (err) {
       setError(err.message || "Financial analysis execution failed.")
+      toast.error("Financial analysis failed")
     } finally {
       setIsAnalyzing(false)
     }
@@ -177,6 +196,11 @@ export function ExposurePage() {
   }
 
   const hasData = exposures.length > 0
+  
+  // Extract primary exposure properties for live UI display
+  const primaryExposure = exposures.find(e => e.status === "Valid") || exposures[0] || {}
+  const liveBaseRate = primaryExposure.base_rate
+  const liveCurrency = primaryExposure.currency || "USD"
 
   return (
     <div className="space-y-6 pb-12">
@@ -270,6 +294,9 @@ export function ExposurePage() {
             analyzedCount={acceptedRows}
             onAnalyze={handleAnalyze}
             onResetAnalysis={() => setIsAnalyzed(false)}
+            liveRate={liveBaseRate}
+            liveCurrency={liveCurrency}
+            exposures={exposures}
           />
         )}
       </div>

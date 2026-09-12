@@ -70,7 +70,7 @@ export async function explainRisk(contextData) {
     })
     if (!response.ok) throw new Error("Failed to get AI explanation")
     const data = await response.json()
-    return data.explanation
+    return data
   } catch (error) {
     console.error("RiskService - Explain Error:", error)
     throw error

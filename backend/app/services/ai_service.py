@@ -15,6 +15,12 @@ class _ExposureRaw(BaseModel):
     counterparty: Optional[str] = None
     exposure_type: str
 
+class _RiskExplanationRaw(BaseModel):
+    primary_concern: str
+    key_observation: str
+    current_status: str
+    recommended_action: str
+
 
 def extract_exposure(text: str) -> ExposureInput:
     """Extracts structured FX exposure data from unstructured text using AI."""
@@ -48,16 +54,29 @@ def extract_exposure(text: str) -> ExposureInput:
     )
 
 
-def explain_risk(context: dict[str, Any]) -> str:
-    """Generates a plain-language explanation of calculated risk metrics using AI."""
+def explain_risk(context: dict[str, Any]) -> dict[str, str]:
+    """Generates a structured risk explanation using AI."""
 
     prompt = f"""
     You are a helpful business risk analyst. Explain the following calculated FX risk metrics in plain English.
-    Keep it concise (2-3 sentences max) and business-focused.
-    DO NOT invent any new numbers or advice. Only explain what these numbers mean.
+    Keep it concise (1-2 sentences max per point) and business-focused.
+    DO NOT invent any new numerical values, percentages, or arbitrary limits. Only use the EXACT numbers provided in the Context below.
+    If a limit is not provided, do not mention a limit.
 
-    Calculated Data:
+    The context contains the full pipeline:
+    - Exposure and overall risk score
+    - Historical Volatility (from ECB reference data) and stress scenario impact
+    - A selected Hedge Mitigation strategy showing projected savings
+
+    You must provide four short statements:
+    - primary_concern: The biggest risk factor identified in the exposure (e.g. amount, timeline, or volatility).
+    - key_observation: An important insight based on the historical stress scenario and potential additional costs.
+    - current_status: The overall state of the exposure and how much of it the user has chosen to hedge vs the algorithm's recommendation.
+    - recommended_action: A clear next step highlighting the illustrative benefit/savings of the selected hedge.
+
+    Calculated Data Context:
     {json.dumps(context, indent=2)}
     """
 
-    return provider.generate_text(prompt)
+    raw = provider.generate_structured(prompt, _RiskExplanationRaw)
+    return raw.model_dump()

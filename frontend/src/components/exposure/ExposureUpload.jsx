@@ -200,12 +200,13 @@ export function ExposureUpload({
           />
 
           {!uploadedFile ? (
-            /* Empty State / Drag & Drop Area */
-            <div
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-              onClick={() => fileInputRef.current?.click()}
+            uploadMode === "file" ? (
+              /* Empty State / Drag & Drop Area */
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
               className={`relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 text-center cursor-pointer transition-all duration-200 ${
                 isDragOver
                   ? "border-blue-500 bg-blue-50/50 dark:bg-blue-950/20 scale-[0.99]"
@@ -240,6 +241,27 @@ export function ExposureUpload({
                 <span>· Max 25 MB</span>
               </div>
             </div>
+            ) : (
+              /* Text Input Area */
+              <div className="relative flex flex-col items-center justify-center rounded-xl border-2 border-slate-300 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/30 p-6">
+                <textarea
+                  className="w-full h-32 p-3 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 placeholder:text-slate-400"
+                  placeholder='e.g., "We need to pay our London supplier GBP 45,000 in 30 days."'
+                  value={magicText}
+                  onChange={(e) => setMagicText(e.target.value)}
+                  disabled={isProcessing}
+                />
+                <Button
+                  type="button"
+                  onClick={() => onExtractText(magicText)}
+                  disabled={isProcessing || !magicText.trim()}
+                  className="w-full h-10 gap-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold"
+                >
+                  {isProcessing ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+                  <span>Extract Exposure</span>
+                </Button>
+              </div>
+            )
           ) : (
             /* Selected File Card */
             <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/40 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">

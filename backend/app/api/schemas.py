@@ -26,11 +26,14 @@ class AnalysisResponse(BaseModel):
     risk_score: int
     risk_level: str
 
+class BatchAnalysisResponse(BaseModel):
+    exposures: list[AnalysisResponse]
+
 
 class UploadResponse(BaseModel):
     filename: str
     rows_processed: int
-    exposure: ExposureInput
+    exposures: list[ExposureInput]
 
 
 class ScenarioInput(ExposureInput):
@@ -71,8 +74,11 @@ class AIExplanationRequest(BaseModel):
     context: dict[str, Any] = Field(description="The calculated risk data to explain")
 
 
-class AIExplanationResponse(BaseModel):
-    explanation: str
+class RiskExplanationResponse(BaseModel):
+    primary_concern: str
+    key_observation: str
+    current_status: str
+    recommended_action: str
 
 class VolatilityRequest(BaseModel):
     currency: str = Field(min_length=3, max_length=3)

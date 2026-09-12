@@ -73,6 +73,7 @@ export const demoBatchUpload = {
       amount: 450000,
       days_to_payment: 1,
       status: "Valid",
+      base_rate: 88.50
     },
     {
       id: "exp-2",
@@ -82,6 +83,7 @@ export const demoBatchUpload = {
       amount: 180000,
       days_to_payment: 4,
       status: "Valid",
+      base_rate: 88.50
     },
     {
       id: "exp-3",
@@ -91,6 +93,7 @@ export const demoBatchUpload = {
       amount: 220000,
       days_to_payment: 7,
       status: "Valid",
+      base_rate: 88.50
     },
     {
       id: "exp-4",
@@ -100,6 +103,7 @@ export const demoBatchUpload = {
       amount: 125000,
       days_to_payment: 32,
       status: "Valid",
+      base_rate: 88.50
     },
     {
       id: "exp-5",
@@ -109,6 +113,7 @@ export const demoBatchUpload = {
       amount: 310000,
       days_to_payment: 12,
       status: "Valid",
+      base_rate: 96.20
     },
     {
       id: "exp-6",
@@ -118,6 +123,7 @@ export const demoBatchUpload = {
       amount: 42000000,
       days_to_payment: 18,
       status: "Valid",
+      base_rate: 0.60
     },
     {
       id: "exp-7",
@@ -127,6 +133,7 @@ export const demoBatchUpload = {
       amount: 140000,
       days_to_payment: 5,
       status: "Valid",
+      base_rate: 112.40
     },
     {
       id: "exp-8",
@@ -146,6 +153,7 @@ export const demoBatchUpload = {
       amount: 95000,
       days_to_payment: 22,
       status: "Valid",
+      base_rate: 98.10
     },
     {
       id: "exp-10",
@@ -155,6 +163,7 @@ export const demoBatchUpload = {
       amount: 380000,
       days_to_payment: 45,
       status: "Valid",
+      base_rate: 88.50
     },
     {
       id: "exp-11",
@@ -164,6 +173,7 @@ export const demoBatchUpload = {
       amount: 215000,
       days_to_payment: 8,
       status: "Valid",
+      base_rate: 96.20
     },
     {
       id: "exp-12",
@@ -173,6 +183,7 @@ export const demoBatchUpload = {
       amount: 165000,
       days_to_payment: 14,
       status: "Valid",
+      base_rate: 88.50
     },
     {
       id: "exp-13",
@@ -182,6 +193,7 @@ export const demoBatchUpload = {
       amount: 290000,
       days_to_payment: 28,
       status: "Valid",
+      base_rate: 88.50
     },
     {
       id: "exp-14",
@@ -201,6 +213,7 @@ export const demoBatchUpload = {
       amount: 520000,
       days_to_payment: 3,
       status: "Valid",
+      base_rate: 88.50
     },
     {
       id: "exp-16",
@@ -210,6 +223,7 @@ export const demoBatchUpload = {
       amount: 110000,
       days_to_payment: 30,
       status: "Valid",
+      base_rate: 96.20
     },
     {
       id: "exp-17",
@@ -219,6 +233,7 @@ export const demoBatchUpload = {
       amount: 28000000,
       days_to_payment: 60,
       status: "Valid",
+      base_rate: 0.60
     },
     {
       id: "exp-18",
@@ -228,6 +243,7 @@ export const demoBatchUpload = {
       amount: 90000,
       days_to_payment: 9,
       status: "Valid",
+      base_rate: 112.40
     },
     {
       id: "exp-19",
@@ -237,6 +253,7 @@ export const demoBatchUpload = {
       amount: 195000,
       days_to_payment: 21,
       status: "Valid",
+      base_rate: 96.20
     },
     {
       id: "exp-20",
@@ -246,6 +263,7 @@ export const demoBatchUpload = {
       amount: 340000,
       days_to_payment: 16,
       status: "Valid",
+      base_rate: 88.50
     },
     {
       id: "exp-21",
@@ -255,6 +273,7 @@ export const demoBatchUpload = {
       amount: 150000,
       days_to_payment: 40,
       status: "Valid",
+      base_rate: 96.20
     },
     {
       id: "exp-22",
@@ -264,6 +283,7 @@ export const demoBatchUpload = {
       amount: 85000,
       days_to_payment: 2,
       status: "Valid",
+      base_rate: 96.20
     },
     {
       id: "exp-23",
@@ -273,6 +293,7 @@ export const demoBatchUpload = {
       amount: 35000000,
       days_to_payment: 25,
       status: "Valid",
+      base_rate: 0.60
     },
     {
       id: "exp-24",
@@ -282,6 +303,7 @@ export const demoBatchUpload = {
       amount: 210000,
       days_to_payment: 11,
       status: "Valid",
+      base_rate: 112.40
     },
     {
       id: "exp-25",
@@ -291,6 +313,7 @@ export const demoBatchUpload = {
       amount: 410000,
       days_to_payment: 19,
       status: "Valid",
+      base_rate: 88.50
     },
   ],
 }
