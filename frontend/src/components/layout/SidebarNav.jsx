@@ -38,36 +38,6 @@ export const navItems = [
     icon: ShieldAlert,
     badge: null,
   },
-  {
-    id: "scenarios",
-    title: "Scenarios",
-    icon: SlidersHorizontal,
-    badge: null,
-  },
-  {
-    id: "hedge-advisor",
-    title: "Hedge Advisor",
-    icon: GitBranch,
-    badge: "AI",
-  },
-  {
-    id: "charts",
-    title: "Charts",
-    icon: ChartNoAxesCombined,
-    badge: "Live",
-  },
-  {
-    id: "alerts",
-    title: "Alerts",
-    icon: Bell,
-    badge: "7",
-  },
-  {
-    id: "reports",
-    title: "Reports",
-    icon: FileText,
-    badge: null,
-  },
 ]
 
 export const bottomNavItems = [

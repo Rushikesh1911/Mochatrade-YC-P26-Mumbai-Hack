@@ -10,9 +10,11 @@ router = APIRouter(tags=["upload"])
 @router.post("/upload", response_model=UploadResponse)
 async def upload_exposure(file: UploadFile = File(...)) -> UploadResponse:
     try:
-        parsed, row_count = parse_exposure_file(file.filename or "", await file.read())
-        live_rate = get_live_inr_rate(parsed["currency"])
-        exposure = ExposureInput(**parsed, base_rate=live_rate)
+        parsed_list, row_count = parse_exposure_file(file.filename or "", await file.read())
+        exposures = []
+        for p in parsed_list:
+            live_rate = get_live_inr_rate(p["currency"])
+            exposures.append(ExposureInput(**p, base_rate=live_rate))
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
-    return UploadResponse(filename=file.filename or "upload", rows_processed=row_count, exposure=exposure)
+    return UploadResponse(filename=file.filename or "upload", rows_processed=row_count, exposures=exposures)

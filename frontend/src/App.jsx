@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { ThemeProvider } from "@/context/ThemeContext"
 import { NavigationProvider, useNavigation } from "@/context/NavigationContext"
+import { AppProvider } from "@/context/AppContext"
 import { MainLayout } from "@/components/layout/MainLayout"
 import { LandingPage } from "@/pages/LandingPage"
 import { DashboardPage } from "@/pages/DashboardPage"
@@ -66,9 +67,11 @@ function AppContent() {
 export default function App() {
   return (
     <ThemeProvider>
-      <NavigationProvider>
-        <AppContent />
-      </NavigationProvider>
+      <AppProvider>
+        <NavigationProvider>
+          <AppContent />
+        </NavigationProvider>
+      </AppProvider>
     </ThemeProvider>
   )
 }

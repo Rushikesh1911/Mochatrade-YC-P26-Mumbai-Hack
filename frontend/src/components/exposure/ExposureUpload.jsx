@@ -11,6 +11,8 @@ import {
   RefreshCw,
   Sparkles,
   ArrowRight,
+  Wand2,
+  FileText,
 } from "lucide-react"
 import { sampleCsvTemplate } from "@/data/exposure-demo"
 
@@ -22,9 +24,12 @@ export function ExposureUpload({
   error = null,
   columnMapping = null,
   onReset,
+  onExtractText,
 }) {
   const fileInputRef = useRef(null)
   const [isDragOver, setIsDragOver] = useState(false)
+  const [uploadMode, setUploadMode] = useState("file") // "file" or "text"
+  const [magicText, setMagicText] = useState("")
 
   const handleDragOver = (e) => {
     e.preventDefault()
@@ -75,17 +80,19 @@ export function ExposureUpload({
           <div>
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-                <UploadCloud className="h-4 w-4" />
+                {uploadMode === "file" ? <UploadCloud className="h-4 w-4" /> : <Wand2 className="h-4 w-4" />}
               </div>
               <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-                Upload Exposure Data
+                {uploadMode === "file" ? "Upload Exposure Data" : "AI Magic Extract"}
               </h2>
               <span className="rounded bg-blue-500/10 px-2 py-0.5 text-[10px] font-mono font-semibold text-blue-600 dark:text-blue-400 border border-blue-500/20">
                 STEP 1: INGEST
               </span>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Import your exposure positions from a CSV or Excel spreadsheet for batch validation.
+              {uploadMode === "file" 
+                ? "Import your exposure positions from a CSV or Excel spreadsheet for batch validation." 
+                : "Paste raw text from emails or invoices, and our AI will automatically extract the exposure."}
             </p>
           </div>
 
@@ -157,8 +164,32 @@ export function ExposureUpload({
           </div>
         )}
 
-        {/* Drop Zone or Active File Card */}
-        <div className="mt-4">
+        {/* Mode Toggle & Drop Zone */}
+        <div className="mt-4 space-y-4">
+          <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+            <button
+              onClick={() => setUploadMode("file")}
+              className={`text-xs font-semibold px-3 py-1.5 rounded-md transition-colors ${
+                uploadMode === "file" 
+                  ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white" 
+                  : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+              }`}
+            >
+              File Upload
+            </button>
+            <button
+              onClick={() => setUploadMode("text")}
+              className={`text-xs font-semibold px-3 py-1.5 rounded-md transition-colors ${
+                uploadMode === "text" 
+                  ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" 
+                  : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+              }`}
+            >
+              <Wand2 className="h-3.5 w-3.5 inline mr-1.5 -mt-0.5" />
+              Magic Text Extract
+            </button>
+          </div>
+
           <input
             ref={fileInputRef}
             type="file"
@@ -169,12 +200,13 @@ export function ExposureUpload({
           />
 
           {!uploadedFile ? (
-            /* Empty State / Drag & Drop Area */
-            <div
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-              onClick={() => fileInputRef.current?.click()}
+            uploadMode === "file" ? (
+              /* Empty State / Drag & Drop Area */
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
               className={`relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 text-center cursor-pointer transition-all duration-200 ${
                 isDragOver
                   ? "border-blue-500 bg-blue-50/50 dark:bg-blue-950/20 scale-[0.99]"
@@ -209,6 +241,27 @@ export function ExposureUpload({
                 <span>· Max 25 MB</span>
               </div>
             </div>
+            ) : (
+              /* Text Input Area */
+              <div className="relative flex flex-col items-center justify-center rounded-xl border-2 border-slate-300 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/30 p-6">
+                <textarea
+                  className="w-full h-32 p-3 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 placeholder:text-slate-400"
+                  placeholder='e.g., "We need to pay our London supplier GBP 45,000 in 30 days."'
+                  value={magicText}
+                  onChange={(e) => setMagicText(e.target.value)}
+                  disabled={isProcessing}
+                />
+                <Button
+                  type="button"
+                  onClick={() => onExtractText(magicText)}
+                  disabled={isProcessing || !magicText.trim()}
+                  className="w-full h-10 gap-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold"
+                >
+                  {isProcessing ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+                  <span>Extract Exposure</span>
+                </Button>
+              </div>
+            )
           ) : (
             /* Selected File Card */
             <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/40 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -253,6 +306,29 @@ export function ExposureUpload({
                   title="Remove file"
                 >
                   <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Text Upload UI */}
+          {!uploadedFile && uploadMode === "text" && (
+            <div className="space-y-3">
+              <textarea
+                value={magicText}
+                onChange={(e) => setMagicText(e.target.value)}
+                placeholder="e.g., We have an upcoming payment of 50,000 EUR to SAP next week..."
+                className="w-full min-h-[120px] p-3 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              />
+              <div className="flex justify-end">
+                <Button
+                  onClick={() => onExtractText && onExtractText(magicText)}
+                  disabled={isProcessing || !magicText.trim()}
+                  className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
+                  size="sm"
+                >
+                  <Wand2 className="h-4 w-4" />
+                  Extract Exposure
                 </Button>
               </div>
             </div>

@@ -1,43 +1,41 @@
 import React from "react"
 import { DashboardBentoGrid } from "./DashboardBentoGrid"
-import { Sparkles } from "lucide-react"
+import { Sparkles, ArrowRight } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { useNavigation } from "@/context/NavigationContext"
 
-export function Dashboard({ data, selectedPeriod = "30D" }) {
-  if (!data) return null
+export function Dashboard({ exposures = [], riskScore = null, volatility = null }) {
+  const { navigate } = useNavigation()
+  const hasData = exposures && exposures.length > 0 && riskScore !== null
+
+  if (!hasData) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[60vh] text-center px-4">
+        <div className="h-16 w-16 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-4 border border-blue-100 dark:border-blue-800/50">
+          <Sparkles className="h-8 w-8 text-blue-500" />
+        </div>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No Exposures Analyzed</h2>
+        <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">
+          Upload and analyze your CSV or Excel exposure data in the Exposure workspace to see your live risk dashboard.
+        </p>
+        <Button 
+          onClick={() => navigate('exposure')}
+          className="bg-blue-600 hover:bg-blue-700 text-white gap-2 font-medium"
+        >
+          Go to Exposure Workspace
+          <ArrowRight className="h-4 w-4" />
+        </Button>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
-      {/* Executive Copilot Summary Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-blue-500/30 dark:border-blue-500/20 bg-gradient-to-r from-blue-50/80 via-white/80 to-slate-50/80 dark:from-blue-950/40 dark:via-slate-900/60 dark:to-slate-900/40 p-4 shadow-sm dark:shadow-none backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30">
-            <Sparkles className="h-4 w-4" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 font-mono">
-                Copilot Insight
-              </span>
-              <span className="text-slate-400 dark:text-slate-600">•</span>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                SEE Layer Active
-              </span>
-            </div>
-            <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 mt-0.5">
-              High USD concentration (&gt;65% of net exposure) creates elevated volatility vulnerability for Q3 supplier payables.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-[11px] text-slate-500 dark:text-slate-400 hidden lg:inline">
-            Workflow: <strong className="text-blue-600 dark:text-blue-400 font-semibold">SEE</strong> → SIMULATE → DECIDE
-          </span>
-        </div>
-      </div>
-
-      {/* Main Bento Grid */}
-      <DashboardBentoGrid data={data} selectedPeriod={selectedPeriod} />
+      <DashboardBentoGrid 
+        exposures={exposures} 
+        riskScore={riskScore} 
+        volatility={volatility} 
+      />
     </div>
   )
 }

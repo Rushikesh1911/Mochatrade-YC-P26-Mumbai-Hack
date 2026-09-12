@@ -1,5 +1,12 @@
-import React from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import { BentoCard } from "@/components/aceternity/BentoCard"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -21,8 +28,60 @@ export function AnalysisStatus({
   analyzedCount = 0,
   onAnalyze,
   onResetAnalysis,
+  liveRate = null,
+  liveCurrency = "USD",
+  exposures = []
 }) {
   const { navigate } = useNavigation()
+
+  // Compute unique currencies and their latest rates from exposures
+  const uniqueCurrencies = useMemo(() => {
+    const map = new Map()
+    exposures.forEach(e => {
+      if (e.currency && e.base_rate && e.status === "Valid") {
+        map.set(e.currency, e.base_rate)
+      }
+    })
+    return Array.from(map.entries()).map(([currency, rate]) => ({ currency, rate }))
+  }, [exposures])
+
+  const [selectedCurrency, setSelectedCurrency] = useState("")
+
+  // Set default selection when currencies load
+  useEffect(() => {
+    if (uniqueCurrencies.length > 0 && !selectedCurrency) {
+      setSelectedCurrency(uniqueCurrencies[0].currency)
+    }
+  }, [uniqueCurrencies, selectedCurrency])
+
+  const displayRate = selectedCurrency 
+    ? uniqueCurrencies.find(c => c.currency === selectedCurrency)?.rate 
+    : liveRate
+  const displayCurrency = selectedCurrency || liveCurrency
+
+  const loadingSteps = [
+    "Establishing secure connection to HedgeMind engine...",
+    "Ingesting financial exposure parameters...",
+    "Executing mark-to-market calculations...",
+    "Running deterministic volatility stress scenarios...",
+    "Generating multi-currency risk models...",
+    "Extracting Copilot AI Insights...",
+    "Finalizing quantitative analysis...",
+  ];
+  const [stepIndex, setStepIndex] = useState(0);
+
+  useEffect(() => {
+    if (isAnalyzing) {
+      setStepIndex(0);
+      const interval = setInterval(() => {
+        setStepIndex(prev => {
+          if (prev < loadingSteps.length - 1) return prev + 1;
+          return prev;
+        });
+      }, 700);
+      return () => clearInterval(interval);
+    }
+  }, [isAnalyzing]);
 
   return (
     <BentoCard
@@ -54,9 +113,24 @@ export function AnalysisStatus({
 
             <div className="flex items-center gap-2 font-mono text-xs text-slate-500">
               <span>Benchmark Rate:</span>
-              <span className="font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded border border-slate-200 dark:border-slate-700">
-                USD/INR ₹88.50
-              </span>
+              {uniqueCurrencies.length > 1 ? (
+                <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
+                  <SelectTrigger className="h-8 w-32 bg-slate-100 dark:bg-slate-800 font-bold text-slate-900 dark:text-white border-slate-200 dark:border-slate-700">
+                    <SelectValue placeholder="Select Currency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {uniqueCurrencies.map((c) => (
+                      <SelectItem key={c.currency} value={c.currency} className="font-mono text-xs font-bold">
+                        {c.currency}/INR ₹{c.rate.toFixed(2)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <span className="font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded border border-slate-200 dark:border-slate-700">
+                  {displayCurrency}/INR ₹{displayRate ? displayRate.toFixed(2) : "88.50"}
+                </span>
+              )}
             </div>
           </div>
 
@@ -83,13 +157,13 @@ export function AnalysisStatus({
               size="lg"
               onClick={onAnalyze}
               disabled={validCount === 0 || isAnalyzing}
-              className="h-11 px-6 text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/20 gap-2 shrink-0 cursor-pointer disabled:cursor-not-allowed"
+              className={`h-11 px-6 text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/20 gap-2 shrink-0 cursor-pointer disabled:cursor-not-allowed transition-all duration-300 w-full sm:w-[320px] ${isAnalyzing ? "opacity-90" : ""}`}
             >
               {isAnalyzing ? (
-                <>
-                  <RefreshCw className="h-4 w-4 animate-spin" />
-                  <span>Analyzing {validCount} exposures...</span>
-                </>
+                <div className="flex items-center gap-2 overflow-hidden w-full justify-center">
+                  <RefreshCw className="h-4 w-4 animate-spin shrink-0" />
+                  <span className="truncate">{loadingSteps[stepIndex]}</span>
+                </div>
               ) : (
                 <>
                   <ScanSearch className="h-4 w-4" />

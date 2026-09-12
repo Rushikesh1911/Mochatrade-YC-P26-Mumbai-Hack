@@ -49,11 +49,21 @@ def parse_exposure_file(filename: str, content: bytes) -> tuple[dict[str, Any], 
         raise ValueError(f"missing required columns: {', '.join(sorted(missing))}")
     if frame.empty:
         raise ValueError("the uploaded file has no data rows")
-    row = frame.iloc[0]
-    return {
-        "amount": _required_number(row["amount"], "amount"),
-        "currency": str(row["currency"]).strip(),
-        "days_to_payment": _whole_number(row["days_to_payment"], "days_to_payment"),
-        "counterparty": None if pd.isna(row.get("counterparty")) else str(row.get("counterparty")),
-        "exposure_type": str(row.get("exposure_type", "payable")),
-    }, len(frame)
+    exposures = []
+    for _, row in frame.iterrows():
+        try:
+            ex = {
+                "amount": abs(_required_number(row["amount"], "amount")),
+                "currency": str(row["currency"]).strip(),
+                "days_to_payment": _whole_number(row["days_to_payment"], "days_to_payment"),
+                "counterparty": None if pd.isna(row.get("counterparty")) else str(row.get("counterparty")),
+                "exposure_type": str(row.get("exposure_type", "payable")),
+            }
+            exposures.append(ex)
+        except ValueError:
+            pass # skip invalid rows for now, or we could handle them
+            
+    if not exposures:
+        raise ValueError("no valid data rows found in the uploaded file")
+
+    return exposures, len(frame)
